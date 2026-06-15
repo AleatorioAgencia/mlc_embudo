@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            const errDiv = document.createElement('div');
+            errDiv.style.position = 'fixed';
+            errDiv.style.top = '0';
+            errDiv.style.left = '0';
+            errDiv.style.width = '100%';
+            errDiv.style.backgroundColor = '#fee2e2';
+            errDiv.style.color = '#991b1b';
+            errDiv.style.padding = '15px';
+            errDiv.style.borderBottom = '3px solid #f87171';
+            errDiv.style.zIndex = '999999';
+            errDiv.style.fontFamily = 'monospace';
+            errDiv.style.fontSize = '12px';
+            errDiv.innerHTML = '<strong>[JS ERROR]</strong> ' + message + ' <br> <em>' + source + ':' + lineno + ':' + colno + '</em>';
+            document.body.appendChild(errDiv);
+            return false;
+        };
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración Privado | MLC Master China</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS styles -->
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- SCREEN 1: LOGIN PORTAL -->
+    <div id="login-screen" class="login-container">
+        <div class="login-card glass-effect">
+            <div class="login-header">
+                <img src="assets/logo.jpg" alt="MLC Master China Logo" class="login-logo">
+                <h2>MLC Master China</h2>
+                <p>CMS de Gestión Interna y Control de Fichas</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Usuario Administrador</label>
+                    <input type="text" id="login-username" class="form-control" placeholder="Ingresa tu usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Contraseña</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div id="login-error-msg" class="error-alert" style="display: none;">
+                    ⚠️ Credenciales incorrectas. Por favor, intenta de nuevo.
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">
+                    <span>Iniciar Sesión</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: ADMIN PANEL CONTAINER -->
+    <div id="admin-panel" class="admin-layout" style="display: none;">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-brand">
+                <img src="assets/logo.jpg" alt="Logo" class="sidebar-logo">
+                <div class="sidebar-brand-text">
+                    <span class="brand-title">MLC ADMIN</span>
+                    <span class="brand-status">Online • 2026</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-tab="tab-dashboard">
+                    <span class="nav-icon">📈</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-landing">
+                    <span class="nav-icon">📝</span>
+                    <span>Contenido Landing</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-vehicles">
+                    <span class="nav-icon">🚗</span>
+                    <span>Gestión Vehículos</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-pdf">
+                    <span class="nav-icon">📄</span>
+                    <span>Módulo PDF Dinámico</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-media">
+                    <span class="nav-icon">📸</span>
+                    <span>Biblioteca Medios</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-faqs">
+                    <span class="nav-icon">💬</span>
+                    <span>FAQs & Testimonios</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="tab-settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Configuración</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary btn-sm btn-full" id="logout-btn">
+                    <span>Cerrar Sesión 🚪</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="admin-main">
+            <!-- TOP BAR STATUS -->
+            <header class="admin-topbar">
+                <div class="topbar-title-section">
+                    <h1 id="tab-title-text">Dashboard</h1>
+                </div>
+                <div class="topbar-actions">
+                    <span id="db-status-badge" class="db-status-badge status-published">Publicado</span>
+                    <button class="btn btn-secondary btn-sm" id="btn-preview-landing">
+                        <span>Ver Landing Pública 👁️</span>
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="btn-publish-db">
+                        <span>Publicar Cambios 🚀</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="admin-content-scroller">
+                
+                <!-- TAB 1: DASHBOARD -->
+                <div id="tab-dashboard" class="tab-content active">
+                    <div class="dashboard-stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-icon">🚗</span>
+                            <div class="stat-info">
+                                <h3>Vehículos Activos</h3>
+                                <p id="dash-veh-count">3 Modelos</p>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-icon">📄</span>
+                            <div class="stat-info">
+                                <h3>Fichas PDF</h3>
+                                <p id="dash-pdf-count">1 Generada</p>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-icon">💬</span>
+                            <div class="stat-info">
+                                <h3>Comunidad IG</h3>
+                                <p>+280K Seguidores</p>
+                            </div>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-icon">⚡</span>
+                            <div class="stat-info">
+                                <h3>Estado General</h3>
+                                <p class="text-green" id="dash-db-status">Sincronizado</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-panels">
+                        <div class="dash-panel panel-left">
+                            <h3>Accesos Rápidos y Acciones</h3>
+                            <div class="quick-actions-grid">
+                                <button class="quick-action-btn" data-target-tab="tab-landing">
+                                    <span>📝 Editar Copys Hero</span>
+                                </button>
+                                <button class="quick-action-btn" data-target-tab="tab-vehicles">
+                                    <span>🚗 Agregar Nuevo Vehículo</span>
+                                </button>
+                                <button class="quick-action-btn" data-target-tab="tab-pdf">
+                                    <span>📄 Configurar Catálogo PDF</span>
+                                </button>
+                                <button class="quick-action-btn" data-target-tab="tab-settings">
+                                    <span>📞 Modificar Link WhatsApp</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dash-panel panel-right">
+                            <h3>Historial de Operación y Cambios</h3>
+                            <ul class="activity-log" id="activity-log-list">
+                                <li>
+                                    <span class="log-time">Hace unos instantes</span>
+                                    <p>CMS Inicializado exitosamente y conectado con `localStorage`.</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: CONTENIDO LANDING -->
+                <div id="tab-landing" class="tab-content">
+                    <div class="landing-editor-layout">
+                        <!-- COLUMNA IZQUIERDA: MAPA VISUAL DE LA LANDING -->
+                        <div class="section-navigation-map" style="max-height: 700px; overflow-y: auto; padding-right: 5px;">
+                             <h4>Estructura de la Landing</h4>
+                             <p style="font-size: 0.75rem; color: var(--text-sec); margin-bottom: 15px;">Selecciona la sección del embudo que deseas editar:</p>
+                             
+                             <div class="map-step-item active" data-section="sec-top-bar">
+                                 <span class="map-step-badge">1</span>
+                                 <div class="map-step-info">
+                                     <h5>Barra Superior</h5>
+                                     <p>Mensaje de Confianza</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-hero">
+                                 <span class="map-step-badge">2</span>
+                                 <div class="map-step-info">
+                                     <h5>Hero Principal</h5>
+                                     <p>Cabecera y Precio Gancho</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-trust-strip">
+                                 <span class="map-step-badge">3</span>
+                                 <div class="map-step-info">
+                                     <h5>Barra de Confianza</h5>
+                                     <p>Garantías Rápidas</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-about-ig">
+                                 <span class="map-step-badge">4</span>
+                                 <div class="map-step-info">
+                                     <h5>Nosotros & Instagram</h5>
+                                     <p>Historia y Feed Social</p>
+                                 </div>
+                             </div>
+                             
+                             <div class="map-step-item" data-section="sec-vsl">
+                                 <span class="map-step-badge">5</span>
+                                 <div class="map-step-info">
+                                     <h5>Video de Ventas (VSL)</h5>
+                                     <p>Presentación y Proceso</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-reels">
+                                 <span class="map-step-badge">6</span>
+                                 <div class="map-step-info">
+                                     <h5>Reels de Operaciones</h5>
+                                     <p>Vídeos en Puerto</p>
+                                 </div>
+                             </div>
+                             
+                             <div class="map-step-item" data-section="sec-ceo">
+                                 <span class="map-step-badge">7</span>
+                                 <div class="map-step-info">
+                                     <h5>Oficina / CEO</h5>
+                                     <p>Presencia y Confianza</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-costs">
+                                 <span class="map-step-badge">8</span>
+                                 <div class="map-step-info">
+                                     <h5>Desglose de Costos</h5>
+                                     <p>Simulador e Inclusiones</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-features">
+                                 <span class="map-step-badge">9</span>
+                                 <div class="map-step-info">
+                                     <h5>Características</h5>
+                                     <p>Ficha Técnica Rápida</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-pdf-promo">
+                                 <span class="map-step-badge">10</span>
+                                 <div class="map-step-info">
+                                     <h5>Ficha Técnica PDF</h5>
+                                     <p>Descarga de Catálogo</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-other-models">
+                                 <span class="map-step-badge">11</span>
+                                 <div class="map-step-info">
+                                     <h5>Otros Modelos Toyota</h5>
+                                     <p>Unidades Relacionadas</p>
+                                 </div>
+                             </div>
+                             
+                             <div class="map-step-item" data-section="sec-whatsapp">
+                                 <span class="map-step-badge">12</span>
+                                 <div class="map-step-info">
+                                     <h5>Sección WhatsApp</h5>
+                                     <p>Por qué chatear</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-testimonials-gallery">
+                                 <span class="map-step-badge">13</span>
+                                 <div class="map-step-info">
+                                     <h5>Evidencia y Opiniones</h5>
+                                     <p>Supervisión y Voces</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-faqs">
+                                 <span class="map-step-badge">14</span>
+                                 <div class="map-step-info">
+                                     <h5>Preguntas Frecuentes</h5>
+                                     <p>FAQs de la Landing</p>
+                                 </div>
+                             </div>
+
+                             <div class="map-step-item" data-section="sec-cta-final">
+                                 <span class="map-step-badge">15</span>
+                                 <div class="map-step-info">
+                                     <h5>CTA Final</h5>
+                                     <p>Urgencia de Cierre</p>
+                                 </div>
+                             </div>
+                             
+                             <div class="map-step-item" data-section="sec-footer">
+                                 <span class="map-step-badge">16</span>
+                                 <div class="map-step-info">
+                                     <h5>Cierre y Footer</h5>
+                                     <p>Legal y Dirección</p>
+                                 </div>
+                             </div>
+                         </div>
+
+                        <!-- COLUMNA DERECHA: FORMULARIOS DE EDICIÓN CON TEMA CLARO -->
+                        <div class="section-forms-container">
+                            <form id="landing-texts-form" class="admin-form-group-container">
+                                
+                                <!-- SECCIÓN 1: BARRA SUPERIOR -->
+                                <div class="form-section-card cms-light-theme active" id="sec-top-bar">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 1: Barra Superior</h3>
+                                        </div>
+                                        <a href="index.html" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview text-center">
+                                        <div class="wf-element highlight text-center" data-target="top-bar-text-input" style="font-size: 0.7rem;">📍 Texto de Confianza Barra Superior</div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="top-bar-text-input">Texto de la Barra Superior</label>
+                                            <input type="text" id="top-bar-text-input" class="form-control" required>
+                                            <span class="input-helper">Texto explicativo en la parte superior de la página.</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 2: HERO PRINCIPAL -->
+                                <div class="form-section-card cms-light-theme" id="sec-hero">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 2: Hero Principal</h3>
+                                        </div>
+                                        <a href="index.html" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <!-- Wireframe Hero -->
+                                    <div class="wireframe-preview wf-hero">
+                                        <div class="wf-row">
+                                            <div class="wf-col-text">
+                                                <div class="wf-tag-indicator">OPORTUNIDAD</div>
+                                                <div class="wf-element highlight" data-target="hero-title-input">TÍTULO (Headline)</div>
+                                                <div class="wf-element highlight" data-target="hero-desc-input">DESCRIPCIÓN (Subheadline)</div>
+                                                <div class="wf-row-flex">
+                                                    <div class="wf-btn-sim ws-green">WhatsApp CTA</div>
+                                                    <div class="wf-btn-sim pdf-gray">Ficha Técnica</div>
+                                                </div>
+                                                <div class="wf-element highlight text-center" data-target="hero-disclaimer-input" style="font-size: 0.5rem; margin-top: 10px; padding: 4px;">*Disclaimer Legal</div>
+                                            </div>
+                                            <div class="wf-col-img">
+                                                <div class="wf-img-box" id="wf-hero-car-preview" style="background-size: cover; background-position: center;">🚗 Vehículo Principal</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campos Formulario -->
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="hero-title-input">Título Principal (Headline)</label>
+                                            <textarea id="hero-title-input" class="form-control" rows="2" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="hero-desc-input">Descripción del Hero (Subheadline)</label>
+                                            <textarea id="hero-desc-input" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="hero-price-input">Precio Gancho / Base</label>
+                                            <input type="text" id="hero-price-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="hero-disclaimer-input">Disclaimer Legal Pequeño</label>
+                                            <input type="text" id="hero-disclaimer-input" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Direct Image Upload for Hero Vehicle -->
+                                    <div class="form-row" style="margin-top: 15px;">
+                                        <div class="form-group-col">
+                                            <label>Imagen Destacada del Vehículo Principal (Hero)</label>
+                                            <div class="direct-media-uploader">
+                                                <div class="media-upload-preview" id="hero-img-preview-container">
+                                                    <img src="assets/corolla-cross.png" id="hero-img-preview" alt="Vista previa auto">
+                                                </div>
+                                                <div class="media-upload-actions">
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="hero-img-file">
+                                                        <span>Subir Imagen del Auto 📤</span>
+                                                    </button>
+                                                    <input type="file" id="hero-img-file" style="display: none;" accept="image/*">
+                                                    <span class="input-helper">Sube la imagen del vehículo principal (se convertirá a base64).</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- YouTube Reel Video for Hero -->
+                                    <div class="form-row" style="margin-top: 20px;">
+                                        <div class="form-group-col">
+                                            <label for="hero-youtube-url-input">
+                                                🎬 Video Reel de YouTube en el Hero (Opcional)
+                                            </label>
+                                            <div style="display:flex; align-items:center; gap:10px;">
+                                                <input type="url" id="hero-youtube-url-input" class="form-control" placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/...">
+                                                <button type="button" id="clear-hero-video-btn" class="btn btn-secondary btn-sm" style="white-space:nowrap;">✕ Quitar video</button>
+                                            </div>
+                                            <div style="background: #f0f9ff; border:1px solid #bae6fd; border-radius:8px; padding:10px 14px; margin-top:10px;">
+                                                <p style="margin:0; font-size:0.8rem; color:#0369a1; line-height:1.5;">
+                                                    <strong>ℹ️ Importante:</strong> Si introduces una URL aquí, el video <strong>reemplaza la imagen</strong> del vehículo en el Hero. Se reproduce automáticamente con loop y sin sonido (modo autoplay).<br>
+                                                    Formatos aceptados: <code>youtube.com/watch?v=ID</code>, <code>youtu.be/ID</code>, <code>youtube.com/shorts/ID</code>.<br>
+                                                    <strong>Para dejar sólo la imagen:</strong> borra la URL y guarda cambios.
+                                                </p>
+                                            </div>
+                                            <div id="hero-yt-preview" style="margin-top:12px; display:none;">
+                                                <p style="font-size:0.75rem; color:#64748b; margin-bottom:6px;">Previsualización del embed:</p>
+                                                <div style="width:140px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #b1976b;">
+                                                    <iframe id="hero-yt-preview-iframe" src="" allow="autoplay" style="width:100%; height:100%; border:none;"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 3: BARRA DE CONFIANZA -->
+                                <div class="form-section-card cms-light-theme" id="sec-trust-strip">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 3: Barra de Confianza (Strip)</h3>
+                                        </div>
+                                        <a href="index.html" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview">
+                                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                                            <div class="wf-element highlight text-center" style="font-size:0.6rem;" data-target="trust-head-1-input">🏢 Confianza 1</div>
+                                            <div class="wf-element highlight text-center" style="font-size:0.6rem;" data-target="trust-head-2-input">🇨🇳 Confianza 2</div>
+                                            <div class="wf-element highlight text-center" style="font-size:0.6rem;" data-target="trust-head-3-input">💬 Confianza 3</div>
+                                            <div class="wf-element highlight text-center" style="font-size:0.6rem;" data-target="trust-head-4-input">🚢 Confianza 4</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Campos Formulario (4 items) -->
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label>Item 1: Icono (Emoji) & Título</label>
+                                            <div style="display: flex; gap: 8px;">
+                                                <input type="text" id="trust-icon-1-input" class="form-control" style="width: 60px;" required>
+                                                <input type="text" id="trust-head-1-input" class="form-control" required>
+                                            </div>
+                                            <input type="text" id="trust-text-1-input" class="form-control" style="margin-top: 6px;" placeholder="Descripción corta" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label>Item 2: Icono (Emoji) & Título</label>
+                                            <div style="display: flex; gap: 8px;">
+                                                <input type="text" id="trust-icon-2-input" class="form-control" style="width: 60px;" required>
+                                                <input type="text" id="trust-head-2-input" class="form-control" required>
+                                            </div>
+                                            <input type="text" id="trust-text-2-input" class="form-control" style="margin-top: 6px;" placeholder="Descripción corta" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row-2" style="margin-top: 10px;">
+                                        <div class="form-group-col">
+                                            <label>Item 3: Icono (Emoji) & Título</label>
+                                            <div style="display: flex; gap: 8px;">
+                                                <input type="text" id="trust-icon-3-input" class="form-control" style="width: 60px;" required>
+                                                <input type="text" id="trust-head-3-input" class="form-control" required>
+                                            </div>
+                                            <input type="text" id="trust-text-3-input" class="form-control" style="margin-top: 6px;" placeholder="Descripción corta" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label>Item 4: Icono (Emoji) & Título</label>
+                                            <div style="display: flex; gap: 8px;">
+                                                <input type="text" id="trust-icon-4-input" class="form-control" style="width: 60px;" required>
+                                                <input type="text" id="trust-head-4-input" class="form-control" required>
+                                            </div>
+                                            <input type="text" id="trust-text-4-input" class="form-control" style="margin-top: 6px;" placeholder="Descripción corta" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 4: SOBRE NOSOTROS E INSTAGRAM -->
+                                <div class="form-section-card cms-light-theme" id="sec-about-ig">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 4: Sobre Nosotros e Instagram</h3>
+                                        </div>
+                                        <a href="index.html#about-section" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview">
+                                        <div class="wf-row">
+                                            <div style="width: 50%; padding-right: 10px;">
+                                                <div class="wf-tag-indicator">TRAYECTORIA</div>
+                                                <div class="wf-element highlight" data-target="about-title-input">TÍTULO HISTORIA</div>
+                                                <div class="wf-element highlight" data-target="about-desc-1-input" style="font-size:0.55rem; height:40px; overflow:hidden;">Cuerpo de la trayectoria...</div>
+                                            </div>
+                                            <div style="width: 50%; background: #fafafa; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; display: flex; align-items: center; justify-content: center;">
+                                                <div id="wf-ig-screenshot-preview" style="width: 100%; height: 60px; background-size: cover; background-position: center; border-radius: 4px; border: 0.5px solid #cbd5e1; background-image: url('assets/instagram-screenshot.png');"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Campos Textos -->
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="about-tag-input">Tag o Categoría</label>
+                                            <input type="text" id="about-tag-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="about-title-input">Título de Trayectoria</label>
+                                            <input type="text" id="about-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="about-desc-1-input">Párrafo de Trayectoria 1</label>
+                                            <textarea id="about-desc-1-input" class="form-control" rows="2" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="about-desc-2-input">Párrafo de Trayectoria 2</label>
+                                            <textarea id="about-desc-2-input" class="form-control" rows="2" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="about-ig-followers-input">Número de Seguidores Instagram</label>
+                                            <input type="text" id="about-ig-followers-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="about-ig-posts-input">Número de Publicaciones (Posts)</label>
+                                            <input type="text" id="about-ig-posts-input" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Media: Instagram Screenshot -->
+                                    <div class="form-row" style="margin-top: 15px;">
+                                        <div class="form-group-col">
+                                            <label>Captura de Pantalla de Instagram (Imagen Completa)</label>
+                                            <div class="direct-media-uploader">
+                                                <div class="media-upload-preview" id="about-ig-screenshot-preview-container" style="width: 120px; height: 120px; border-radius: 8px;">
+                                                    <img src="assets/instagram-screenshot.png" id="about-ig-screenshot-preview" alt="Instagram Screenshot" style="border-radius: 8px; object-fit: contain;">
+                                                </div>
+                                                <div class="media-upload-actions">
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="about-ig-screenshot-file">
+                                                        <span>Subir Captura de Instagram 📤</span>
+                                                    </button>
+                                                    <input type="file" id="about-ig-screenshot-file" style="display: none;" accept="image/*">
+                                                    <small class="form-text text-muted" style="margin-top: 5px;">Se recomienda subir una captura de tu perfil de Instagram en formato móvil para reemplazar la sección simulada.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 5: VIDEO DE VENTAS (VSL) -->
+                                <div class="form-section-card cms-light-theme" id="sec-vsl">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 5: Video de Ventas (VSL)</h3>
+                                        </div>
+                                        <a href="index.html#vsl-section" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+
+                                    <!-- Wireframe VSL -->
+                                    <div class="wireframe-preview wf-vsl">
+                                        <div class="wf-vsl-container">
+                                            <div class="wf-element highlight text-center" data-target="vsl-tag-input" style="width: fit-content; margin: 0 auto 5px; padding: 2px 8px;">TAG / CATEGORÍA</div>
+                                            <div class="wf-element highlight text-center" data-target="vsl-title-input">TÍTULO DEL BLOQUE</div>
+                                            <div class="wf-element highlight text-center" data-target="vsl-subtitle-input" style="font-size: 0.6rem;">SUBTÍTULO</div>
+                                            <div class="wf-video-box" id="wf-vsl-video-box" style="background-size: cover; background-position: center;">
+                                                <div class="wf-video-play-btn">▶</div>
+                                                <span id="wf-vsl-video-label">Video In-Place vertical (90s)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campos Formulario -->
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="vsl-title-input">Título del Bloque Video</label>
+                                            <input type="text" id="vsl-title-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="vsl-subtitle-input">Subtítulo o Descripción corta</label>
+                                            <input type="text" id="vsl-subtitle-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="vsl-tag-input">Tag o Categoría</label>
+                                            <input type="text" id="vsl-tag-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="vsl-youtube-url-input">🎬 Video de YouTube en VSL (Alternativo)</label>
+                                            <div style="display:flex; align-items:center; gap:10px;">
+                                                <input type="url" id="vsl-youtube-url-input" class="form-control" placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/...">
+                                                <button type="button" id="clear-vsl-video-btn" class="btn btn-secondary btn-sm" style="white-space:nowrap;">✕ Quitar video</button>
+                                            </div>
+                                            <span class="input-helper">Si pones un enlace de YouTube se priorizará sobre el MP4 subido.</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- YouTube Video Preview for VSL -->
+                                    <div class="form-row" id="vsl-yt-preview-row" style="margin-top: 15px; display: none;">
+                                        <div class="form-group-col">
+                                            <div id="vsl-yt-preview">
+                                                <p style="font-size:0.75rem; color:#64748b; margin-bottom:6px;">Previsualización del embed:</p>
+                                                <div style="width:140px; aspect-ratio:9/16; border-radius:12px; overflow:hidden; border:2px solid #b1976b;">
+                                                    <iframe id="vsl-yt-preview-iframe" src="" allow="autoplay" style="width:100%; height:100%; border:none;"></iframe>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Direct Image & Video Upload for VSL -->
+                                    <div class="form-row-2" style="margin-top: 15px;">
+                                        <div class="form-group-col">
+                                            <label>Miniatura de Video VSL (Reel)</label>
+                                            <div class="direct-media-uploader">
+                                                <div class="media-upload-preview" id="vsl-thumb-preview-container">
+                                                    <img src="assets/ceo-alex.png" id="vsl-thumb-preview" alt="Vista previa miniatura">
+                                                </div>
+                                                <div class="media-upload-actions">
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="vsl-thumb-file">
+                                                        <span>Subir Thumbnail 📤</span>
+                                                    </button>
+                                                    <input type="file" id="vsl-thumb-file" style="display: none;" accept="image/*">
+                                                    <span class="input-helper">Retrato o miniatura de la sección.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label>Archivo de Video VSL (Reel MP4)</label>
+                                            <div class="direct-media-uploader">
+                                                <div class="media-upload-preview video-preview" id="vsl-video-preview-container">
+                                                    <span style="font-size: 2rem;">🎬</span>
+                                                    <p id="vsl-video-status" style="font-size:0.75rem;margin:5px 0 0 0;color:var(--text-muted);">Simulado por defecto</p>
+                                                </div>
+                                                <div class="media-upload-actions">
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="vsl-video-file">
+                                                        <span>Subir Video MP4 📤</span>
+                                                    </button>
+                                                    <input type="file" id="vsl-video-file" style="display: none;" accept="video/mp4,video/*">
+                                                    <span class="input-helper">Sube un video vertical corto (máx 3-4MB recomendado).</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 6: REELS DE OPERACIONES -->
+                                <div class="form-section-card cms-light-theme" id="sec-reels">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 6: Reels de Operaciones en Puerto</h3>
+                                        </div>
+                                        <a href="index.html#reels-section" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview text-center">
+                                        <div class="wf-tag-indicator" style="margin-bottom: 4px;">OPERACIONES</div>
+                                        <div class="wf-element highlight text-center" data-target="reels-title-input">TÍTULO SECCIÓN</div>
+                                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px;">
+                                            <div class="wf-element highlight text-center" style="font-size: 0.55rem; padding: 2px;">Reel 1</div>
+                                            <div class="wf-element highlight text-center" style="font-size: 0.55rem; padding: 2px;">Reel 2</div>
+                                            <div class="wf-element highlight text-center" style="font-size: 0.55rem; padding: 2px;">Reel 3</div>
+                                            <div class="wf-element highlight text-center" style="font-size: 0.55rem; padding: 2px;">Reel 4</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Campos Textos Generales -->
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="reels-tag-input">Tag o Categoría</label>
+                                            <input type="text" id="reels-tag-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="reels-title-input">Título de Sección Reels</label>
+                                            <input type="text" id="reels-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="reels-subtitle-input">Subtítulo de Sección Reels</label>
+                                            <input type="text" id="reels-subtitle-input" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- 4 Reels Grid uploaders -->
+                                    <label style="margin-top: 15px; display: block; font-weight: bold;">Configuración Individual de los 4 Reels</label>
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 8px;">
+                                        <!-- Reel 1 -->
+                                        <div class="form-group-col" style="border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; background: #fafafa;">
+                                            <span style="font-size:0.75rem; font-weight:bold; color:var(--gold);">Reel 1: Inspección Auto</span>
+                                            <input type="text" id="reel1-title-input" class="form-control" style="margin-top: 6px;" placeholder="Título del Reel">
+                                            <input type="text" id="reel1-desc-input" class="form-control" style="margin-top: 6px;" placeholder="Descripción corta">
+                                            <input type="text" id="reel1-views-input" class="form-control" style="margin-top: 6px;" placeholder="Vistas (ej. 84K)">
+                                            <input type="url" id="reel1-youtube-url-input" class="form-control" style="margin-top: 6px;" placeholder="URL YouTube Reel 1 (Opcional)">
+                                            
+                                            <!-- Media uploaders Reel 1 -->
+                                            <div style="display:flex; gap:8px; margin-top:10px;">
+                                                <div class="form-group-col" style="flex:1;">
+                                                    <span style="font-size:0.6rem; font-weight:bold;">Thumbnail</span>
+                                                    <div class="media-upload-preview" id="reel1-thumb-preview-container" style="width: 100%; height: 50px; margin-bottom: 4px;">
+                                                        <img src="assets/ceo-alex.png" id="reel1-thumb-preview" alt="Reel 1 Thumb">
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="reel1-thumb-file" style="font-size:0.65rem;">Subir 📤</button>
+                                                    <input type="file" id="reel1-thumb-file" style="display: none;" accept="image/*">
+                                                </div>
+                                                <div class="form-group-col" style="flex:1;">
+                                                    <span style="font-size:0.6rem; font-weight:bold;">Video MP4</span>
+                                                    <div class="media-upload-preview video-preview" id="reel1-video-preview-container" style="width: 100%; height: 50px; margin-bottom: 4px; padding: 0;">
+                                                        <span style="font-size:1rem;">🎬</span>
+                                                        <span id="reel1-video-status" style="font-size:0.5rem; color:var(--text-muted);">Default</span>
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="reel1-video-file" style="font-size:0.65rem;">Subir 📤</button>
+                                                    <input type="file" id="reel1-video-file" style="display: none;" accept="video/mp4,video/*">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Reel 2 -->
+                                        <div class="form-group-col" style="border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; background: #fafafa;">
+                                            <span style="font-size:0.75rem; font-weight:bold; color:var(--gold);">Reel 2: Consolidación</span>
+                                            <input type="text" id="reel2-title-input" class="form-control" style="margin-top: 6px;" placeholder="Título del Reel">
+                                            <input type="text" id="reel2-desc-input" class="form-control" style="margin-top: 6px;" placeholder="Descripción corta">
+                                            <input type="text" id="reel2-views-input" class="form-control" style="margin-top: 6px;" placeholder="Vistas (ej. 112K)">
+                                            <input type="url" id="reel2-youtube-url-input" class="form-control" style="margin-top: 6px;" placeholder="URL YouTube Reel 2 (Opcional)">
+                                            
+                                            <!-- Media uploaders Reel 2 -->
+                                            <div style="display:flex; gap:8px; margin-top:10px;">
+                                                <div class="form-group-col" style="flex:1;">
+                                                    <span style="font-size:0.6rem; font-weight:bold;">Thumbnail</span>
+                                                    <div class="media-upload-preview" id="reel2-thumb-preview-container" style="width: 100%; height: 50px; margin-bottom: 4px;">
+                                                        <img src="assets/ceo-alex.png" id="reel2-thumb-preview" alt="Reel 2 Thumb">
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="reel2-thumb-file" style="font-size:0.65rem;">Subir 📤</button>
+                                                    <input type="file" id="reel2-thumb-file" style="display: none;" accept="image/*">
+                                                </div>
+                                                <div class="form-group-col" style="flex:1;">
+                                                    <span style="font-size:0.6rem; font-weight:bold;">Video MP4</span>
+                                                    <div class="media-upload-preview video-preview" id="reel2-video-preview-container" style="width: 100%; height: 50px; margin-bottom: 4px; padding: 0;">
+                                                        <span style="font-size:1rem;">🎬</span>
+                                                        <span id="reel2-video-status" style="font-size:0.5rem; color:var(--text-muted);">Default</span>
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="reel2-video-file" style="font-size:0.65rem;">Subir 📤</button>
+                                                    <input type="file" id="reel2-video-file" style="display: none;" accept="video/mp4,video/*">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+                                        <!-- Reel 3 -->
+                                        <div class="form-group-col" style="border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; background: #fafafa;">
+                                            <span style="font-size:0.75rem; font-weight:bold; color:var(--gold);">Reel 3: Oficina Guangzhou</span>
+                                            <input type="text" id="reel3-title-input" class="form-control" style="margin-top: 6px;" placeholder="Título del Reel">
+                                            <input type="text" id="reel3-desc-input" class="form-control" style="margin-top: 6px;" placeholder="Descripción corta">
+                                            <input type="text" id="reel3-views-input" class="form-control" style="margin-top: 6px;" placeholder="Vistas (ej. 95K)">
+                                            <input type="url" id="reel3-youtube-url-input" class="form-control" style="margin-top: 6px;" placeholder="URL YouTube Reel 3 (Opcional)">
+                                            
+                                            <!-- Media uploaders Reel 3 -->
+                                            <div style="display:flex; gap:8px; margin-top:10px;">
+                                                <div class="form-group-col" style="flex:1;">
+                                                    <span style="font-size:0.6rem; font-weight:bold;">Thumbnail</span>
+                                                    <div class="media-upload-preview" id="reel3-thumb-preview-container" style="width: 100%; height: 50px; margin-bottom: 4px;">
+                                                        <img src="assets/ceo-alex.png" id="reel3-thumb-preview" alt="Reel 3 Thumb">
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="reel3-thumb-file" style="font-size:0.65rem;">Subir 📤</button>
+                                                    <input type="file" id="reel3-thumb-file" style="display: none;" accept="image/*">
+                                                </div>
+                                                <div class="form-group-col" style="flex:1;">
+                                                    <span style="font-size:0.6rem; font-weight:bold;">Video MP4</span>
+                                                    <div class="media-upload-preview video-preview" id="reel3-video-preview-container" style="width: 100%; height: 50px; margin-bottom: 4px; padding: 0;">
+                                                        <span style="font-size:1rem;">🎬</span>
+                                                        <span id="reel3-video-status" style="font-size:0.5rem; color:var(--text-muted);">Default</span>
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="reel3-video-file" style="font-size:0.65rem;">Subir 📤</button>
+                                                    <input type="file" id="reel3-video-file" style="display: none;" accept="video/mp4,video/*">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Reel 4 -->
+                                        <div class="form-group-col" style="border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; background: #fafafa;">
+                                            <span style="font-size:0.75rem; font-weight:bold; color:var(--gold);">Reel 4: Despacho Puerto</span>
+                                            <input type="text" id="reel4-title-input" class="form-control" style="margin-top: 6px;" placeholder="Título del Reel">
+                                            <input type="text" id="reel4-desc-input" class="form-control" style="margin-top: 6px;" placeholder="Descripción corta">
+                                            <input type="text" id="reel4-views-input" class="form-control" style="margin-top: 6px;" placeholder="Vistas (ej. 72K)">
+                                            <input type="url" id="reel4-youtube-url-input" class="form-control" style="margin-top: 6px;" placeholder="URL YouTube Reel 4 (Opcional)">
+                                            
+                                            <!-- Media uploaders Reel 4 -->
+                                            <div style="display:flex; gap:8px; margin-top:10px;">
+                                                <div class="form-group-col" style="flex:1;">
+                                                    <span style="font-size:0.6rem; font-weight:bold;">Thumbnail</span>
+                                                    <div class="media-upload-preview" id="reel4-thumb-preview-container" style="width: 100%; height: 50px; margin-bottom: 4px;">
+                                                        <img src="assets/ceo-alex.png" id="reel4-thumb-preview" alt="Reel 4 Thumb">
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="reel4-thumb-file" style="font-size:0.65rem;">Subir 📤</button>
+                                                    <input type="file" id="reel4-thumb-file" style="display: none;" accept="image/*">
+                                                </div>
+                                                <div class="form-group-col" style="flex:1;">
+                                                    <span style="font-size:0.6rem; font-weight:bold;">Video MP4</span>
+                                                    <div class="media-upload-preview video-preview" id="reel4-video-preview-container" style="width: 100%; height: 50px; margin-bottom: 4px; padding: 0;">
+                                                        <span style="font-size:1rem;">🎬</span>
+                                                        <span id="reel4-video-status" style="font-size:0.5rem; color:var(--text-muted);">Default</span>
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="reel4-video-file" style="font-size:0.65rem;">Subir 📤</button>
+                                                    <input type="file" id="reel4-video-file" style="display: none;" accept="video/mp4,video/*">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 7: OFICINA / CEO -->
+                                <div class="form-section-card cms-light-theme" id="sec-ceo">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 7: Bloque de Autoridad (CEO)</h3>
+                                        </div>
+                                        <a href="index.html#about-section" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+
+                                    <!-- Wireframe CEO -->
+                                    <div class="wireframe-preview wf-ceo">
+                                        <div class="wf-row">
+                                            <div class="wf-col-img" style="width: 40%;">
+                                                <div class="wf-img-box" id="wf-ceo-profile-preview" style="height: 100px; background-size: cover; background-position: center;">👨 Profile CEO</div>
+                                                <div class="wf-element highlight" data-target="ceo-quote-input" style="font-size: 0.5rem; margin-top: 8px; font-style: italic;">"Cita o Frase del CEO"</div>
+                                            </div>
+                                            <div class="wf-col-text" style="width: 60%;">
+                                                <div class="wf-tag-indicator">PRESENCIA FISCAL</div>
+                                                <div class="wf-element highlight" data-target="ceo-title-input">TÍTULO AUTORIDAD</div>
+                                                <div class="wf-element highlight" data-target="ceo-desc-input" style="font-size: 0.6rem; height: 65px; overflow: hidden;">DESCRIPCIÓN DE RESPALDO CORPORATIVO</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campos Formulario -->
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="ceo-title-input">Título de Autoridad</label>
+                                            <input type="text" id="ceo-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="ceo-desc-input">Texto de Respaldo Corporativo</label>
+                                            <textarea id="ceo-desc-input" class="form-control" rows="4" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="ceo-quote-input">Frase Célebre de Cierre (Quote)</label>
+                                            <input type="text" id="ceo-quote-input" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Direct Image Upload for CEO Portrait -->
+                                    <div class="form-row" style="margin-top: 15px;">
+                                        <div class="form-group-col">
+                                            <label>Retrato Oficial de Autoridad (CEO)</label>
+                                            <div class="direct-media-uploader">
+                                                <div class="media-upload-preview" id="ceo-img-preview-container">
+                                                    <img src="assets/ceo-alex.png" id="ceo-img-preview" alt="Vista previa CEO">
+                                                </div>
+                                                <div class="media-upload-actions">
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="ceo-img-file">
+                                                        <span>Subir Retrato del CEO 📤</span>
+                                                    </button>
+                                                    <input type="file" id="ceo-img-file" style="display: none;" accept="image/*">
+                                                    <span class="input-helper">Sube el retrato o foto de Alex Cabrera.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 8: DESGLOSE DE COSTOS -->
+                                <div class="form-section-card cms-light-theme" id="sec-costs">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 8: Estructura de Valores & Costos</h3>
+                                        </div>
+                                        <a href="index.html#cost-section" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview text-center">
+                                        <div class="wf-tag-indicator" style="margin:0 auto 4px;">ESTRUCTURA</div>
+                                        <div class="wf-element highlight text-center" data-target="costs-title-input">TÍTULO VALORES</div>
+                                        <div style="display:flex; gap:10px; margin-top:8px;">
+                                            <div class="wf-element highlight" style="flex:1;font-size:0.55rem;">✓ Costo Base FOB</div>
+                                            <div class="wf-element highlight" style="flex:1;font-size:0.55rem;">✗ Gastos Destino</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Campos Formulario -->
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="costs-tag-input">Tag o Categoría</label>
+                                            <input type="text" id="costs-tag-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="costs-title-input">Título de Costos</label>
+                                            <input type="text" id="costs-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="costs-subtitle-input">Subtítulo de Costos</label>
+                                            <input type="text" id="costs-subtitle-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Inclusiones (4 items) -->
+                                    <label style="margin-top:15px; font-weight:bold; display:block;">¿Qué incluye el precio base? (FOB China)</label>
+                                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:6px;">
+                                        <input type="text" id="costs-inc-1-input" class="form-control" placeholder="Item 1" required>
+                                        <input type="text" id="costs-inc-2-input" class="form-control" placeholder="Item 2" required>
+                                        <input type="text" id="costs-inc-3-input" class="form-control" placeholder="Item 3" required>
+                                        <input type="text" id="costs-inc-4-input" class="form-control" placeholder="Item 4" required>
+                                    </div>
+                                    
+                                    <!-- Exclusiones (4 items) -->
+                                    <label style="margin-top:15px; font-weight:bold; display:block;">Costos adicionales a considerar (Destino)</label>
+                                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:6px;">
+                                        <input type="text" id="costs-exc-1-input" class="form-control" placeholder="Item 1" required>
+                                        <input type="text" id="costs-exc-2-input" class="form-control" placeholder="Item 2" required>
+                                        <input type="text" id="costs-exc-3-input" class="form-control" placeholder="Item 3" required>
+                                        <input type="text" id="costs-exc-4-input" class="form-control" placeholder="Item 4" required>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 9: CARACTERÍSTICAS -->
+                                <div class="form-section-card cms-light-theme" id="sec-features">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 9: Características del Vehículo</h3>
+                                        </div>
+                                        <a href="index.html#features-section" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview text-center">
+                                        <div class="wf-element highlight" data-target="feat-title-input" style="font-weight:bold;">TÍTULO VEHÍCULO</div>
+                                        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:6px; margin-top:8px;">
+                                            <div class="wf-element highlight" style="font-size:0.5rem; padding: 2px;" data-target="feat-title-1-input">⚙️ Motor</div>
+                                            <div class="wf-element highlight" style="font-size:0.5rem; padding: 2px;" data-target="feat-title-2-input">🎮 Transmisión</div>
+                                            <div class="wf-element highlight" style="font-size:0.5rem; padding: 2px;" data-target="feat-title-3-input">🛡️ Seguridad</div>
+                                            <div class="wf-element highlight" style="font-size:0.5rem; padding: 2px;" data-target="feat-title-4-input">🏢 Distribuidor</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="feat-tag-input">Tag o Categoría</label>
+                                            <input type="text" id="feat-tag-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="feat-title-input">Título de la Sección</label>
+                                            <input type="text" id="feat-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="feat-subtitle-input">Subtítulo de la Sección</label>
+                                            <input type="text" id="feat-subtitle-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 4 Features Inputs -->
+                                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:15px;">
+                                        <!-- Feature 1 -->
+                                        <div style="border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px;">
+                                            <span style="font-size:0.75rem; font-weight:bold; color:var(--gold);">Ficha 1</span>
+                                            <div style="display:flex; gap:6px; margin-top:4px;">
+                                                <input type="text" id="feat-icon-1-input" class="form-control" style="width:45px;" placeholder="⚙️" required>
+                                                <input type="text" id="feat-title-1-input" class="form-control" placeholder="Título" required>
+                                            </div>
+                                            <textarea id="feat-desc-1-input" class="form-control" rows="2" style="margin-top:6px;" placeholder="Descripción" required></textarea>
+                                        </div>
+                                        <!-- Feature 2 -->
+                                        <div style="border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px;">
+                                            <span style="font-size:0.75rem; font-weight:bold; color:var(--gold);">Ficha 2</span>
+                                            <div style="display:flex; gap:6px; margin-top:4px;">
+                                                <input type="text" id="feat-icon-2-input" class="form-control" style="width:45px;" placeholder="🎮" required>
+                                                <input type="text" id="feat-title-2-input" class="form-control" placeholder="Título" required>
+                                            </div>
+                                            <textarea id="feat-desc-2-input" class="form-control" rows="2" style="margin-top:6px;" placeholder="Descripción" required></textarea>
+                                        </div>
+                                        <!-- Feature 3 -->
+                                        <div style="border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px;">
+                                            <span style="font-size:0.75rem; font-weight:bold; color:var(--gold);">Ficha 3</span>
+                                            <div style="display:flex; gap:6px; margin-top:4px;">
+                                                <input type="text" id="feat-icon-3-input" class="form-control" style="width:45px;" placeholder="🛡️" required>
+                                                <input type="text" id="feat-title-3-input" class="form-control" placeholder="Título" required>
+                                            </div>
+                                            <textarea id="feat-desc-3-input" class="form-control" rows="2" style="margin-top:6px;" placeholder="Descripción" required></textarea>
+                                        </div>
+                                        <div style="border: 1px solid #cbd5e1; padding: 10px; border-radius: 6px; background-color: rgba(177, 151, 107, 0.05);">
+                                            <span style="font-size:0.75rem; font-weight:bold; color:var(--gold);">Ficha 4 (Destacada)</span>
+                                            <div style="display:flex; gap:6px; margin-top:4px;">
+                                                <input type="text" id="feat-icon-4-input" class="form-control" style="width:45px;" placeholder="🏢" required>
+                                                <input type="text" id="feat-title-4-input" class="form-control" placeholder="Título" required>
+                                            </div>
+                                            <textarea id="feat-desc-4-input" class="form-control" rows="2" style="margin-top:6px;" placeholder="Descripción" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 10: FICHA TÉCNICA PDF -->
+                                <div class="form-section-card cms-light-theme" id="sec-pdf-promo">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 10: Promoción Ficha Técnica PDF</h3>
+                                        </div>
+                                        <a href="index.html#features-section" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview text-center">
+                                        <div class="wf-row">
+                                            <div style="width: 70%;">
+                                                <div class="wf-element highlight" data-target="pdf-promo-title-input">TÍTULO PDF PROMO</div>
+                                                <div class="wf-element highlight" data-target="pdf-promo-desc-input" style="font-size:0.6rem;margin-top:4px;">Descripción de descarga de catálogo técnico.</div>
+                                            </div>
+                                            <div style="width: 30%;">
+                                                <div class="wf-img-box" id="wf-pdf-mockup-preview" style="height:60px; font-size:0.6rem; background-size: cover;">📄 PDF Cover</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="pdf-promo-title-input">Título de Promoción PDF</label>
+                                            <input type="text" id="pdf-promo-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="pdf-promo-desc-input">Descripción de Promoción PDF</label>
+                                            <textarea id="pdf-promo-desc-input" class="form-control" rows="2" required></textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Media: PDF Cover Mockup -->
+                                    <div class="form-row" style="margin-top: 15px;">
+                                        <div class="form-group-col">
+                                            <label>Imagen de Portada / Mockup de Ficha PDF</label>
+                                            <div class="direct-media-uploader">
+                                                <div class="media-upload-preview" id="pdf-mockup-preview-container">
+                                                    <img src="assets/pdf-mockup.png" id="pdf-mockup-preview" alt="PDF Mockup">
+                                                </div>
+                                                <div class="media-upload-actions">
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="pdf-mockup-file">
+                                                        <span>Subir Mockup PDF 📤</span>
+                                                    </button>
+                                                    <input type="file" id="pdf-mockup-file" style="display: none;" accept="image/*">
+                                                    <span class="input-helper">Sube la imagen de previsualización 3D de la ficha técnica.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 11: OTROS MODELOS TOYOTA -->
+                                <div class="form-section-card cms-light-theme" id="sec-other-models">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 11: Otros Modelos Toyota en Origen</h3>
+                                        </div>
+                                        <a href="index.html" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview text-center">
+                                        <div class="wf-element highlight" data-target="models-title-input" style="font-weight:bold;">TÍTULO MODELOS</div>
+                                        <div class="wf-element highlight" data-target="models-subtitle-input" style="font-size:0.6rem;margin-top:4px;">Subtítulo o descripción de disponibilidad.</div>
+                                    </div>
+                                    
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="models-tag-input">Tag o Categoría</label>
+                                            <input type="text" id="models-tag-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="models-title-input">Título de la Sección</label>
+                                            <input type="text" id="models-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="models-subtitle-input">Subtítulo de la Sección</label>
+                                            <input type="text" id="models-subtitle-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <p class="input-helper" style="margin-top:10px;">*Nota: Las fotos y detalles de cada vehículo individual se editan en la pestaña superior "Gestión Vehículos (CRUD)".</p>
+                                </div>
+
+                                <!-- SECCIÓN 12: SECCIÓN WHATSAPP -->
+                                <div class="form-section-card cms-light-theme" id="sec-whatsapp">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 12: ¿Por qué hablar por WhatsApp?</h3>
+                                        </div>
+                                        <a href="index.html#why-ws-cta" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+
+                                    <!-- Wireframe WhatsApp -->
+                                    <div class="wireframe-preview wf-whatsapp">
+                                        <div class="wf-vsl-container" style="padding: 10px;">
+                                            <div class="wf-tag-indicator" style="margin: 0 auto 5px;">CANAL DIRECTO</div>
+                                            <div class="wf-element highlight text-center" data-target="wh-title-input">TÍTULO DEL CANAL</div>
+                                            <div class="wf-element highlight text-center" data-target="wh-desc-input" style="font-size: 0.6rem; height: 35px; overflow: hidden;">DESCRIPCIÓN DE BENEFICIOS</div>
+                                            <div class="wf-row-flex" style="justify-content: center; margin-top: 5px;">
+                                                <div class="wf-btn-sim ws-green" style="width: 80%; padding: 4px;">Chatear con un Asesor Ahora</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campos Formulario -->
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="wh-title-input">Título Principal</label>
+                                            <input type="text" id="wh-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="wh-desc-input">Descripción Detallada</label>
+                                            <textarea id="wh-desc-input" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 13: EVIDENCIA Y TESTIMONIOS -->
+                                <div class="form-section-card cms-light-theme" id="sec-testimonials-gallery">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 13: Evidencia Operativa y Testimonios</h3>
+                                        </div>
+                                        <a href="index.html#testimonials-wrapper" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview text-center">
+                                        <div class="wf-tag-indicator" style="margin:0 auto 4px;">EVIDENCIA</div>
+                                        <div class="wf-element highlight text-center" data-target="gallery-title-input">TÍTULO GALERÍA</div>
+                                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-top:8px;">
+                                            <div class="wf-element highlight" style="font-size:0.5rem;">🚢 Foto 1</div>
+                                            <div class="wf-element highlight" style="font-size:0.5rem;">📦 Foto 2</div>
+                                            <div class="wf-element highlight" style="font-size:0.5rem;">📋 Foto 3</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="gallery-tag-input">Tag o Categoría</label>
+                                            <input type="text" id="gallery-tag-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="gallery-title-input">Título de Galería</label>
+                                            <input type="text" id="gallery-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="gallery-subtitle-input">Subtítulo de Galería</label>
+                                            <input type="text" id="gallery-subtitle-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 3 Gallery Proof Cards media uploaders -->
+                                    <label style="margin-top:15px; font-weight:bold; display:block;">Imágenes de Supervisión y Despacho en Puerto (3 Tarjetas)</label>
+                                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:8px;">
+                                        <!-- Proof 1 -->
+                                        <div class="form-group-col" style="border: 1px solid #cbd5e1; padding:10px; border-radius:6px;">
+                                            <span style="font-size:0.7rem; font-weight:bold; color:var(--gold);">Tarjeta 1</span>
+                                            <input type="text" id="gal1-title-input" class="form-control" style="font-size:0.75rem; margin-top:4px;" placeholder="Título" required>
+                                            <textarea id="gal1-desc-input" class="form-control" style="font-size:0.7rem; margin-top:4px;" rows="2" placeholder="Descripción" required></textarea>
+                                            <div class="media-upload-preview" id="gal1-img-preview-container" style="width:100%; height:50px; margin: 6px 0;">
+                                                <img src="assets/corolla-cross.png" id="gal1-img-preview" alt="Proof 1">
+                                            </div>
+                                            <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="gal1-img-file" style="font-size:0.65rem;">Subir 📤</button>
+                                            <input type="file" id="gal1-img-file" style="display: none;" accept="image/*">
+                                        </div>
+                                        <!-- Proof 2 -->
+                                        <div class="form-group-col" style="border: 1px solid #cbd5e1; padding:10px; border-radius:6px;">
+                                            <span style="font-size:0.7rem; font-weight:bold; color:var(--gold);">Tarjeta 2</span>
+                                            <input type="text" id="gal2-title-input" class="form-control" style="font-size:0.75rem; margin-top:4px;" placeholder="Título" required>
+                                            <textarea id="gal2-desc-input" class="form-control" style="font-size:0.7rem; margin-top:4px;" rows="2" placeholder="Descripción" required></textarea>
+                                            <div class="media-upload-preview" id="gal2-img-preview-container" style="width:100%; height:50px; margin: 6px 0;">
+                                                <img src="assets/corolla-cross.png" id="gal2-img-preview" alt="Proof 2">
+                                            </div>
+                                            <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="gal2-img-file" style="font-size:0.65rem;">Subir 📤</button>
+                                            <input type="file" id="gal2-img-file" style="display: none;" accept="image/*">
+                                        </div>
+                                        <!-- Proof 3 -->
+                                        <div class="form-group-col" style="border: 1px solid #cbd5e1; padding:10px; border-radius:6px;">
+                                            <span style="font-size:0.7rem; font-weight:bold; color:var(--gold);">Tarjeta 3</span>
+                                            <input type="text" id="gal3-title-input" class="form-control" style="font-size:0.75rem; margin-top:4px;" placeholder="Título" required>
+                                            <textarea id="gal3-desc-input" class="form-control" style="font-size:0.7rem; margin-top:4px;" rows="2" placeholder="Descripción" required></textarea>
+                                            <div class="media-upload-preview" id="gal3-img-preview-container" style="width:100%; height:50px; margin: 6px 0;">
+                                                <img src="assets/corolla-cross.png" id="gal3-img-preview" alt="Proof 3">
+                                            </div>
+                                            <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="gal3-img-file" style="font-size:0.65rem;">Subir 📤</button>
+                                            <input type="file" id="gal3-img-file" style="display: none;" accept="image/*">
+                                        </div>
+                                    </div>
+                                    <p class="input-helper" style="margin-top:10px;">*Nota: Para editar u ordenar los testimonios escritos (cuadrícula inferior), por favor ve a la pestaña superior "Gestión FAQs & Testimonios".</p>
+                                </div>
+
+                                <!-- SECCIÓN 14: PREGUNTAS FRECUENTES -->
+                                <div class="form-section-card cms-light-theme" id="sec-faqs">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 14: Preguntas Frecuentes (Cabecera)</h3>
+                                        </div>
+                                        <a href="index.html#faq-section" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview text-center">
+                                        <div class="wf-element highlight" data-target="faqs-title-input" style="font-weight:bold;">TÍTULO FAQS</div>
+                                        <div class="wf-element highlight" data-target="faqs-subtitle-input" style="font-size:0.6rem;margin-top:4px;">Subtítulo de dudas o preguntas comerciales.</div>
+                                    </div>
+                                    
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="faqs-tag-input">Tag o Categoría</label>
+                                            <input type="text" id="faqs-tag-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="faqs-title-input">Título de la Sección</label>
+                                            <input type="text" id="faqs-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="faqs-subtitle-input">Subtítulo de la Sección</label>
+                                            <input type="text" id="faqs-subtitle-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <p class="input-helper" style="margin-top:10px;">*Nota: Para editar las preguntas y respuestas específicas de la lista de acordeones, ve a la pestaña superior "Gestión FAQs & Testimonios".</p>
+                                </div>
+
+                                <!-- SECCIÓN 15: CTA FINAL -->
+                                <div class="form-section-card cms-light-theme" id="sec-cta-final">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 15: CTA Final Llamado a la Acción</h3>
+                                        </div>
+                                        <a href="index.html#cta-final-whatsapp" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+                                    
+                                    <div class="wireframe-preview text-center">
+                                        <div class="wf-tag-indicator" style="margin:0 auto 4px;">FINAL CTA</div>
+                                        <div class="wf-element highlight text-center" data-target="cta-final-title-input" style="font-weight:bold;">TÍTULO FINAL</div>
+                                        <div class="wf-element highlight text-center" data-target="cta-final-desc-input" style="font-size:0.6rem;margin-top:4px;">Descripción o urgencia final de fletes.</div>
+                                    </div>
+                                    
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="cta-final-tag-input">Tag o Categoría</label>
+                                            <input type="text" id="cta-final-tag-input" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="cta-final-title-input">Título Final de Urgencia</label>
+                                            <input type="text" id="cta-final-title-input" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="cta-final-desc-input">Descripción del Cierre de Urgencia</label>
+                                            <textarea id="cta-final-desc-input" class="form-control" rows="2" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN 16: CIERRE Y FOOTER -->
+                                <div class="form-section-card cms-light-theme" id="sec-footer">
+                                    <div class="section-card-header">
+                                        <div class="section-header-title">
+                                            <span class="active-badge">EDITANDO AHORA</span>
+                                            <h3>Sección 16: Cierre & Footer</h3>
+                                        </div>
+                                        <a href="index.html" target="_blank" class="btn-preview-link">Ver en Landing 🔗</a>
+                                    </div>
+
+                                    <!-- Wireframe Footer -->
+                                    <div class="wireframe-preview wf-footer">
+                                        <div class="wf-vsl-container" style="padding: 10px; background-color: #f8fafc;">
+                                            <!-- Footer body -->
+                                            <div style="background-color: #0f172a; color: #94a3b8; padding: 10px; border-radius: 6px; font-size: 0.5rem; text-align: left; margin-top: 5px;">
+                                                <div style="font-weight: bold; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                                                    <div id="wf-footer-logo-preview" style="width: 14px; height: 14px; border-radius: 50%; background-size: cover; background-position: center; border: 0.5px solid var(--gold);"></div>
+                                                    <span>MLC MASTER CHINA</span>
+                                                </div>
+                                                <div class="wf-element highlight" data-target="footer-desc-input" style="color: #cbd5e1; padding: 2px; margin-bottom: 4px;">Descripción comercial del pie de página.</div>
+                                                <div class="wf-element highlight" data-target="footer-address-input" style="color: #cbd5e1; padding: 2px;">📍 Dirección de la Oficina en Guangzhou.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campos Formulario -->
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="footer-desc-input">Descripción Comercial de Footer</label>
+                                            <textarea id="footer-desc-input" class="form-control" rows="2" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="footer-address-input">Dirección de Oficina en China</label>
+                                            <input type="text" id="footer-address-input" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Direct Image Upload for Brand Logo -->
+                                    <div class="form-row" style="margin-top: 15px;">
+                                        <div class="form-group-col">
+                                            <label>Logotipo Oficial de Marca</label>
+                                            <div class="direct-media-uploader">
+                                                <div class="media-upload-preview" id="brand-logo-preview-container" style="width: 50px; height: 50px; border-radius: 50%;">
+                                                    <img src="assets/logo.jpg" id="brand-logo-preview" alt="Vista previa Logo" style="border-radius: 50%;">
+                                                </div>
+                                                <div class="media-upload-actions">
+                                                    <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="brand-logo-file">
+                                                        <span>Subir Logotipo 📤</span>
+                                                    </button>
+                                                    <input type="file" id="brand-logo-file" style="display: none;" accept="image/*">
+                                                    <span class="input-helper">Logotipo de la empresa (se actualizará en cabecera y pie de página).</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Floating save area -->
+                                <div class="floating-save-area">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span>Guardar Borrador local 💾</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: GESTIÓN VEHÍCULOS (CRUD) -->
+                <div id="tab-vehicles" class="tab-content">
+                    <div class="action-bar">
+                        <h3>Modelos Registrados</h3>
+                        <button class="btn btn-primary btn-sm" id="btn-add-vehicle-trigger">
+                            <span>+ Agregar Vehículo</span>
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Nombre del Vehículo</th>
+                                    <th>Precio FOB Base</th>
+                                    <th>Especificaciones Rápidas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vehicles-table-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- MODAL FORM VEHICLE (ADD/EDIT) -->
+                    <div id="vehicle-form-modal" class="modal" style="display: none;">
+                        <div class="modal-content glass-effect" style="max-width: 700px;">
+                            <span class="close-btn" id="close-vehicle-modal">&times;</span>
+                            <div class="modal-header">
+                                <h3 id="vehicle-modal-title">Agregar Vehículo</h3>
+                                <p>Configura las especificaciones detalladas para la landing pública y la generación de PDF.</p>
+                            </div>
+                            <form id="vehicle-crud-form">
+                                <input type="hidden" id="veh-id">
+                                
+                                <div class="form-row-2">
+                                    <div class="form-group">
+                                        <label for="veh-name">Nombre Comercial del Vehículo</label>
+                                        <input type="text" id="veh-name" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="veh-price">Precio FOB Base (USD)</label>
+                                        <input type="text" id="veh-price" class="form-control" placeholder="14,500" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="veh-short-desc">Descripción Corta (aparece en tarjetas)</label>
+                                        <input type="text" id="veh-short-desc" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="veh-long-desc">Resumen Comercial (Ficha PDF/Detalles)</label>
+                                        <textarea id="veh-long-desc" class="form-control" rows="2" required></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-row-3">
+                                    <div class="form-group">
+                                        <label for="veh-motor">Motor</label>
+                                        <input type="text" id="veh-motor" class="form-control" placeholder="2.0L Dynamic Force" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="veh-transmission">Transmisión</label>
+                                        <input type="text" id="veh-transmission" class="form-control" placeholder="Direct Shift-CVT" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="veh-dimensions">Dimensiones</label>
+                                        <input type="text" id="veh-dimensions" class="form-control" placeholder="4460 / 1825 / 1620 mm" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row-2">
+                                    <div class="form-group">
+                                        <label for="veh-security">Equipamiento Seguridad</label>
+                                        <input type="text" id="veh-security" class="form-control" placeholder="ABS, EBD, VSC, HAC, 7 Airbags" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="veh-tech">Tecnología e Infoentretenimiento</label>
+                                        <input type="text" id="veh-tech" class="form-control" placeholder="Pantalla Táctil, Bluetooth, USB" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="veh-observations">Observaciones Comerciales / Nota Ficha</label>
+                                        <textarea id="veh-observations" class="form-control" rows="2" placeholder="Sujeto a confirmación de stock y flete marítimo..." required></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-row-2">
+                                    <div class="form-group">
+                                        <label>Imagen Destacada del Vehículo</label>
+                                        <div class="direct-media-uploader">
+                                            <div class="media-upload-preview" id="veh-img-preview-container">
+                                                <img src="assets/corolla-cross.png" id="veh-img-preview" alt="Vista previa vehículo">
+                                            </div>
+                                            <div class="media-upload-actions">
+                                                <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="veh-img-file">
+                                                    <span>Subir Imagen del Auto 📤</span>
+                                                </button>
+                                                <input type="file" id="veh-img-file" style="display: none;" accept="image/*">
+                                                <input type="hidden" id="veh-image-path" required>
+                                                <span class="input-helper">Sube una imagen o utiliza una por defecto. Se convertirá a base64.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="veh-status">Estado de Publicación</label>
+                                        <select id="veh-status" class="form-control">
+                                            <option value="active">Activo (Visible en landing)</option>
+                                            <option value="draft">Borrador (Oculto)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 10px;">
+                                    <span>Guardar Datos del Vehículo</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: MÓDULO PDF DINÁMICO -->
+                <div id="tab-pdf" class="tab-content">
+                    <div class="pdf-settings-layout">
+                        <div class="pdf-settings-form-side">
+                            <form id="pdf-config-form" class="admin-form-group-container">
+                                <div class="form-section-card">
+                                    <h3>Configuración de Ficha Técnica PDF</h3>
+                                    <p class="section-desc">Selecciona un vehículo de origen y personaliza las especificaciones técnicas que se compilarán en el PDF final descargable.</p>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="pdf-select-vehicle">Vehículo Seleccionado para la Ficha</label>
+                                            <select id="pdf-select-vehicle" class="form-control" required>
+                                                <!-- Dynamic list -->
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row-2">
+                                        <div class="form-group-col">
+                                            <label for="pdf-header-title">Título del Catálogo</label>
+                                            <input type="text" id="pdf-header-title" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="pdf-header-subtitle">Subtítulo Comercial</label>
+                                            <input type="text" id="pdf-header-subtitle" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="pdf-summary">Resumen Comercial / Introducción</label>
+                                            <textarea id="pdf-summary" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group-col">
+                                            <label for="pdf-legal">Disclaimer Legal e Impuestos (Footer PDF)</label>
+                                            <textarea id="pdf-legal" class="form-control" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="pdf-compilation-actions">
+                                    <button type="submit" class="btn btn-secondary btn-full" id="btn-save-pdf-draft">
+                                        <span>Guardar Configuración 💾</span>
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-full" id="btn-generate-pdf-trigger">
+                                        <span>Generar & Publicar PDF Dinámico 🚀</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="pdf-preview-side">
+                            <div class="preview-device-card glass-effect">
+                                <div class="preview-header">
+                                    <span class="preview-dot"></span>
+                                    <span class="preview-dot"></span>
+                                    <span class="preview-dot"></span>
+                                    <span class="preview-title">Vista Previa - Ficha Técnica Digital</span>
+                                </div>
+                                <div class="pdf-rendered-preview-content">
+                                    <div class="pdf-prev-cover">
+                                        <span class="prev-badge">PDF GENERADO</span>
+                                        <h4 id="prev-pdf-title">Toyota Corolla Cross 2.0 Elite Edition</h4>
+                                        <h5 id="prev-pdf-subtitle">Catálogo de Importación Directa desde Origen (China)</h5>
+                                        <div class="prev-pdf-logo-row">
+                                            <span>MLC MASTER CHINA</span>
+                                        </div>
+                                    </div>
+                                    <div class="pdf-prev-details">
+                                        <p><strong>Resumen Comercial:</strong> <span id="prev-pdf-summary">Cargando...</span></p>
+                                        <table class="prev-pdf-specs-table">
+                                            <tr><td>Motor:</td><td id="prev-pdf-motor">Cargando...</td></tr>
+                                            <tr><td>Transmisión:</td><td id="prev-pdf-transmission">Cargando...</td></tr>
+                                            <tr><td>Dimensiones:</td><td id="prev-pdf-dimensions">Cargando...</td></tr>
+                                            <tr><td>Seguridad:</td><td id="prev-pdf-security">Cargando...</td></tr>
+                                            <tr><td>Tecnología:</td><td id="prev-pdf-tech">Cargando...</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: BIBLIOTECA DE MEDIOS -->
+                <div id="tab-media" class="tab-content">
+                    <div class="media-library-wrapper">
+                        <div class="media-upload-area">
+                            <h4>Subir Nuevo Asset Visual</h4>
+                            <p>Sube imágenes de vehículos, logos o retratos en formato base64 para usarlos en el sitio.</p>
+                            <div class="media-drag-zone" id="media-drop-zone">
+                                <span class="upload-cloud-icon">📤</span>
+                                <p>Arrastra archivos aquí o haz clic para subir</p>
+                                <input type="file" id="media-file-input" style="display: none;" accept="image/*">
+                            </div>
+                        </div>
+                        
+                        <div class="media-assets-grid" id="media-assets-grid-container">
+                            <!-- Medias cards -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 6: FAQS & TESTIMONIOS -->
+                <div id="tab-faqs" class="tab-content">
+                    <div class="faqs-testimonials-layout">
+                        <!-- FAQs Management -->
+                        <div class="faq-panel-card">
+                            <div class="panel-card-header">
+                                <h3>Gestión de Preguntas Frecuentes (FAQs)</h3>
+                                <button class="btn btn-primary btn-sm" id="btn-add-faq">+ Añadir FAQ</button>
+                            </div>
+                            <div class="items-list-container" id="faqs-list-container">
+                                <!-- Dynamic dynamic FAQs rows -->
+                            </div>
+                        </div>
+
+                        <!-- Testimonials Management -->
+                        <div class="testimonial-panel-card">
+                            <div class="panel-card-header">
+                                <h3>Gestión de Testimonios y Prueba Social</h3>
+                                <button class="btn btn-primary btn-sm" id="btn-add-testimonial">+ Añadir Testimonio</button>
+                            </div>
+                            <div class="items-list-container" id="testimonials-list-container">
+                                <!-- Dynamic dynamic testimonials rows -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 7: CONFIGURACIÓN GENERAL -->
+                <div id="tab-settings" class="tab-content">
+                    <form id="settings-form" class="admin-form-group-container">
+                        <div class="form-section-card">
+                            <h3>Configuraciones de Campaña & Enlaces</h3>
+                            <div class="form-row-2">
+                                <div class="form-group-col">
+                                    <label for="set-whatsapp-phone">Número de WhatsApp de Destino</label>
+                                    <input type="text" id="set-whatsapp-phone" class="form-control" required>
+                                    <span class="input-helper">Formato: Código de país + número (sin espacios). Ej. 8618072304859</span>
+                                </div>
+                                <div class="form-group-col">
+                                    <label for="set-instagram-followers">Número de Seguidores de Instagram</label>
+                                    <input type="text" id="set-instagram-followers" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section-card">
+                            <h3>Visibilidad de Secciones (Estructura Landing)</h3>
+                            <div class="toggles-grid">
+                                <div class="toggle-item">
+                                    <span class="toggle-label">Sección VSL (Video del CEO)</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-vsl" checked>
+                                        <span class="slider-round"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-item">
+                                    <span class="toggle-label">Sección Reels de Operaciones</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-reels" checked>
+                                        <span class="slider-round"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-item">
+                                    <span class="toggle-label">Sección Sobre Nosotros e Instagram</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-about" checked>
+                                        <span class="slider-round"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-item">
+                                    <span class="toggle-label">Sección Ficha Técnica PDF</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-pdf" checked>
+                                        <span class="slider-round"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-item">
+                                    <span class="toggle-label">Sección Otros Modelos</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-models" checked>
+                                        <span class="slider-round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section-card">
+                            <h3>Gestión de Credenciales de Seguridad</h3>
+                            <div class="form-row-2">
+                                <div class="form-group-col">
+                                    <label for="set-admin-username">Nombre de Usuario Admin</label>
+                                    <input type="text" id="set-admin-username" class="form-control" required>
+                                </div>
+                                <div class="form-group-col">
+                                    <label for="set-admin-password">Nueva Contraseña</label>
+                                    <input type="password" id="set-admin-password" class="form-control" placeholder="•••••••• (En blanco para mantener actual)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="floating-save-area">
+                            <button type="submit" class="btn btn-primary">
+                                <span>Guardar Configuraciones ⚙️</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- jsPDF Library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- Admin scripts -->
+    <script src="db.js?v=4"></script>
+    <script src="admin.js?v=4"></script>
+</body>
+</html>
