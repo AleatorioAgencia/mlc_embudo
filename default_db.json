@@ -1,0 +1,251 @@
+{
+  "landing_texts": {
+    "top_bar_text": "Empresa radicada en China • Oficina principal en Guangzhou • Soporte comercial 100% en español",
+    "hero_title": "Importa tu Toyota Corolla Cross 2.0 Elite Edition desde USD 14,500*",
+    "hero_desc": "Accede al valor base en origen comprando de manera directa en el mercado chino con la guía, revisión técnica y acompañamiento logístico de MLC Master China. Gestionamos la compra, inspección y exportación para que recibas tu vehículo con más control y transparencia comercial.",
+    "hero_price": "desde USD 14,500*",
+    "hero_disclaimer": "*Precio base referencial FOB en puerto de origen (China). No incluye fletes internacionales, seguros de tránsito, aranceles locales ni impuestos específicos de nacionalización en tu país de destino.",
+    "hero_youtube_url": "",
+    "vsl_tag": "TRANSPARENCIA EN ORIGEN",
+    "vsl_title": "Cómo Gestionamos Tu Importación",
+    "vsl_subtitle": "Descubre en este video de 90 segundos nuestro proceso de verificación técnica en China.",
+    "ceo_title": "Tu Oficina de Control en Guangzhou",
+    "ceo_desc": "No operamos como un intermediario digital informal. En MLC Master China entendemos que la compra de un vehículo representa una inversión significativa. Por ello, ponemos a tu disposición nuestra infraestructura física en Guangzhou y centros de consolidación logística.",
+    "ceo_quote": "\"La confianza en el comercio internacional no se promete, se demuestra con presencia física y control documental riguroso en el puerto.\"",
+    "wh_title": "¿Por qué hablar por WhatsApp con un asesor?",
+    "wh_desc": "Importar un vehículo es un proceso serio que involucra trámites aduaneros, cálculo de aranceles y logística de transporte. En MLC Master China no utilizamos respuestas automáticas de robots que no resuelven tus dudas. Al hacer clic en nuestro canal oficial:",
+    "cta_final_title": "Inicia tu proceso de importación asistida hoy",
+    "cta_final_desc": "Los cupos de consolidación en contenedor y las tarifas de flete marítimo internacional fluctúan mensualmente. Asegura tu cotización base y solicita un presupuesto estimado hacia tu país de destino.",
+    "footer_desc": "Especialistas en acompañamiento comercial, revisión de mercancía e importación directa desde China para el mercado hispanoamericano.",
+    "footer_address": "Room 1802, Jinying Building, No. 316 Huanshi Road Middle, Yuexiu District, Guangzhou, China.",
+    "brand_logo": "assets/logo.jpg",
+    "ceo_profile_img": "assets/ceo-alex.png",
+    "vsl_thumbnail_img": "assets/ceo-alex.png",
+    "vsl_video_path": "",
+    "vsl_youtube_url": "",
+    "trust_icon_1": "🏢",
+    "trust_head_1": "Empresa Radicada en China",
+    "trust_text_1": "Operamos de forma legal y registrada bajo leyes de comercio internacional.",
+    "trust_icon_2": "🇨🇳",
+    "trust_head_2": "Oficina en Guangzhou",
+    "trust_text_2": "Infraestructura física y equipo local de control en los principales puertos chinos.",
+    "trust_icon_3": "💬",
+    "trust_head_3": "Canal Oficial WhatsApp",
+    "trust_text_3": "Seguimiento e informes personalizados en tu idioma de manera constante.",
+    "trust_icon_4": "🚢",
+    "trust_head_4": "Acompañamiento Integral",
+    "trust_text_4": "Toda la documentación gestionada en origen lista para nacionalizar en tu país.",
+    "about_tag": "NUESTRA TRAYECTORIA",
+    "about_title": "Tu Socio Logístico de Confianza en China",
+    "about_desc_1": "En MLC Master China no operamos como comisionistas digitales improvisados. Somos una estructura de comercio internacional con oficinas corporativas en Guangzhou y almacenes de consolidación en Yiwu. Representamos a empresarios y compradores de habla hispana directamente desde el origen comercial del mundo.",
+    "about_desc_2": "Nuestra transparencia, seriedad y control riguroso nos han permitido construir una de las comunidades de importación asistida más sólidas y confiables de Latinoamérica:",
+    "about_ig_followers": "280,000",
+    "about_ig_screenshot": "assets/instagram-screenshot.png",
+    "reels_tag": "OPERACIONES EN VIDEO",
+    "reels_title": "Escrutinio Físico en Tiempo Real",
+    "reels_subtitle": "Acompaña a nuestro equipo y mira cómo revisamos los autos antes de sellar el contenedor.",
+    "reel1_title": "Inspección Corolla Cross",
+    "reel1_desc": "Revisión detallada de chasis, soldaduras y cableado eléctrico en puerto de origen.",
+    "reel1_views": "84K",
+    "reel1_thumb": "assets/ceo-alex.png",
+    "reel1_video": "",
+    "reel1_youtube_url": "https://youtube.com/shorts/ptXhqN7cRM8",
+    "reel2_title": "Consolidación de Contenedor",
+    "reel2_desc": "Trincado y fijación del vehículo para evitar daños en el tránsito marítimo.",
+    "reel2_views": "112K",
+    "reel2_thumb": "assets/ceo-alex.png",
+    "reel2_video": "",
+    "reel2_youtube_url": "https://youtube.com/shorts/huD9PHSQdVY",
+    "reel3_title": "Oficinas en Guangzhou",
+    "reel3_desc": "Nuestro equipo coordinando la facturación y licencias de exportación de aduana.",
+    "reel3_views": "95K",
+    "reel3_thumb": "assets/ceo-alex.png",
+    "reel3_video": "",
+    "reel3_youtube_url": "",
+    "reel4_title": "Testimonio de Despacho",
+    "reel4_desc": "Clientes recibiendo su B/L oficial de embarque marítimo y validando documentos.",
+    "reel4_views": "72K",
+    "reel4_thumb": "assets/ceo-alex.png",
+    "reel4_video": "",
+    "reel4_youtube_url": "",
+    "costs_tag": "ESTRUCTURA DE VALORES",
+    "costs_title": "Transparencia Comercial de Costos",
+    "costs_subtitle": "Conoce exactamente qué compone el presupuesto y cómo calcular el valor final en tu país.",
+    "costs_inc_1": "Adquisición en Origen: Compra directa del Toyota Corolla Cross Elite.",
+    "costs_inc_2": "Inspección Técnica: Validación física de chasis y motor en nuestro almacén logístico.",
+    "costs_inc_3": "Exportación en China: Trámites aduanales y licencias de salida del puerto chino.",
+    "costs_inc_4": "Soporte en Español: Coordinación documental y seguimiento con asesores asignados.",
+    "costs_exc_1": "Flete Marítimo Internacional: Costo del transporte en buque portacontenedor hasta tu puerto.",
+    "costs_exc_2": "Seguro de Carga: Póliza de protección del vehículo durante el tránsito marítimo.",
+    "costs_exc_3": "Aranceles e Impuestos Locales: Tasas aduaneras e IVA/IGV de importación en tu país.",
+    "costs_exc_4": "Agente de Aduana Local: Honorarios del profesional de nacionalización en destino.",
+    "feat_tag": "EL VEHÍCULO",
+    "feat_title": "Toyota Corolla Cross 2.0 Elite Edition",
+    "feat_subtitle": "Características y equipamiento diseñado para el mercado internacional.",
+    "feat_icon_1": "⚙️",
+    "feat_title_1": "Motor 2.0 Dynamic Force",
+    "feat_desc_1": "Excelente equilibrio entre eficiencia de combustible y potencia dinámica para conducción urbana y viajes largos.",
+    "feat_icon_2": "🎮",
+    "feat_title_2": "Direct Shift-CVT",
+    "feat_desc_2": "Transmisión automática secuencial con simulación inteligente de marchas que garantiza una aceleración lineal y suave.",
+    "feat_icon_3": "🛡️",
+    "feat_title_3": "Seguridad Activa Toyota",
+    "feat_desc_3": "Control de estabilidad (VSC), frenos ABS con distribución electrónica de frenado (EBD) y asistente de arranque en pendientes (HAC).",
+    "feat_icon_4": "🏢",
+    "feat_title_4": "Distribuidor Directo Toyota",
+    "feat_desc_4": "Acceso directo al canal de exportación de Toyota en origen, garantizando configuraciones genuinas de fábrica y precios preferenciales.",
+    "pdf_promo_title": "Ficha Técnica Oficial del Vehículo",
+    "pdf_promo_desc": "Descarga de forma directa el documento en PDF que contiene las especificaciones detalladas de exportación de la Toyota Corolla Cross 2.0 Elite Edition. Conoce cada dato de motorización, dimensiones, capacidades y equipamiento.",
+    "pdf_mockup_img": "assets/pdf-mockup.png",
+    "models_tag": "MÁS OPCIONES",
+    "models_title": "Otros Modelos Toyota en Origen",
+    "models_subtitle": "Consulta a nuestro equipo sobre la disponibilidad de importación asistida de estas unidades.",
+    "gallery_tag": "EVIDENCIA OPERATIVA",
+    "gallery_title": "Acompañamiento en Cada Embarque",
+    "gallery_subtitle": "Imágenes reales de la supervisión de carga y despachos documentales realizados.",
+    "gal1_title": "Verificación de Chasis",
+    "gal1_desc": "Inspección del número de serie y estructura del motor de los autos antes de sellar el contenedor en puerto chino.",
+    "gal1_img": "assets/corolla-cross.png",
+    "gal2_title": "Consolidación en Contenedor",
+    "gal2_desc": "Trincado y aseguramiento especial en almacén para evitar movimientos durante el tránsito marítimo internacional.",
+    "gal2_img": "assets/corolla-cross.png",
+    "gal3_title": "Soporte de Carga Listo",
+    "gal3_desc": "Documentación comercial (B/L, packing list y facturas) validada y lista para despacho en las aduanas de destino.",
+    "gal3_img": "assets/corolla-cross.png",
+    "faqs_tag": "RESOLVIENDO DUDAS",
+    "faqs_title": "Preguntas Frecuentes",
+    "faqs_subtitle": "Respuestas claras y comerciales sobre nuestro modelo de importación asistida.",
+    "cta_final_tag": "EL MOMENTO ES AHORA"
+  },
+  "vehicles": [
+    {
+      "id": "1",
+      "name": "Toyota Corolla Cross 2.0 Elite Edition",
+      "price": "14,500",
+      "short_desc": "Versión de origen exclusiva de exportación con equipamiento premium y alto confort.",
+      "long_desc": "Este vehículo destaca por su robustez, seguridad activa y el respaldo de la ingeniería Toyota para el mercado internacional.",
+      "motor": "2.0L Dynamic Force (Gasolina)",
+      "transmision": "Automática Direct Shift-CVT",
+      "dimensiones": "4460 / 1825 / 1620 mm",
+      "seguridad": "ABS, EBD, VSC, HAC, 7 Airbags",
+      "tecnologia": "Infoentretenimiento premium táctil, Bluetooth, USB",
+      "observaciones": "Precio base FOB referencial en China. No incluye aranceles locales ni flete.",
+      "image": "assets/corolla-cross.png",
+      "status": "active"
+    },
+    {
+      "id": "2",
+      "name": "Toyota Corolla 1.8 Híbrido",
+      "price": "13,900",
+      "short_desc": "El sedán de referencia global en eficiencia de combustible autorrecargable y confort de marcha.",
+      "long_desc": "Excelente eficiencia de combustible en tráfico urbano combinando motor de gasolina y motor eléctrico.",
+      "motor": "1.8L Híbrido Auto-Recargable",
+      "transmision": "Automática E-CVT",
+      "dimensiones": "4630 / 1780 / 1455 mm",
+      "seguridad": "Toyota Safety Sense, ABS, VSC, 6 Airbags",
+      "tecnologia": "Pantalla multimedia táctil, Apple CarPlay, Android Auto",
+      "observaciones": "Sujeto a disponibilidad física en stock de exportación origen.",
+      "image": "assets/corolla-cross.png",
+      "status": "active"
+    },
+    {
+      "id": "3",
+      "name": "Toyota RAV4",
+      "price": "18,500",
+      "short_desc": "Excelente amplitud interior, motorización potente y tracción adaptada para todo tipo de terrenos.",
+      "long_desc": "La SUV mediana líder en el segmento familiar por confort, seguridad y espacio de carga.",
+      "motor": "2.0L o 2.5L Gasolina / Híbrida",
+      "transmision": "Automática Direct Shift de 8 vel / CVT",
+      "dimensiones": "4600 / 1855 / 1685 mm",
+      "seguridad": "Frenado autónomo, control dinámico de carril, 7 Airbags",
+      "tecnologia": "Climatizador bizona, panel digital, puertos de carga rápida",
+      "observaciones": "Tarifas de flete y aranceles varían por país de destino.",
+      "image": "assets/corolla-cross.png",
+      "status": "active"
+    }
+  ],
+  "faqs": [
+    {
+      "question": "¿Cómo sé que MLC Master China es una empresa real?",
+      "answer": "Somos una empresa de comercio internacional legalmente establecida, con oficina principal en Guangzhou y equipo operativo local. Invitamos a nuestros clientes a interactuar a través de canales oficiales y proporcionamos reportes de verificación física que demuestran nuestra presencia en los puertos de origen en China."
+    },
+    {
+      "question": "¿Qué garantías tengo durante el proceso de compra e importación?",
+      "answer": "Ofrecemos respaldo y seguimiento comercial documentado. Firmamos un acuerdo de gestión donde se establecen los términos de la importación y te brindamos un reporte técnico de inspección con fotos y videos de tu vehículo (chasis y motor) antes del despacho marítimo."
+    },
+    {
+      "question": "¿El precio de USD 14,500 es el valor total a pagar por el auto?",
+      "answer": "No. Ese es el precio base referencial FOB en puerto de origen (China). Para calcular el costo total de tener el carro en tu país, se deben contemplar el flete marítimo, el seguro de carga y los aranceles e impuestos de nacionalización correspondientes a tu aduana local."
+    },
+    {
+      "question": "¿Cómo se coordinan los trámites de aduana en mi país?",
+      "answer": "MLC Master China gestiona y te entrega toda la documentación de exportación requerida desde China (B/L, Factura, Packing List). Con estos documentos, tu agente de aduanas local realiza la nacionalización de manera directa. Si no cuentas con uno, podemos ponerte en contacto con agentes de aduana de confianza en tu país."
+    },
+    {
+      "question": "¿Qué otros modelos Toyota están disponibles para cotizar?",
+      "answer": "Además del Corolla Cross 2.0 Elite Edition, gestionamos la adquisición del Toyota Corolla 1.8 Híbrido y la Toyota RAV4, adaptados para exportación según la disponibilidad de mercado en China."
+    },
+    {
+      "question": "¿Cuánto tiempo tarda la entrega del vehículo en mi puerto?",
+      "answer": "El proceso logístico completo suele tomar entre 45 y 75 días promedio. Esto abarca la compra y traslado al puerto chino, la inspección técnica, la consolidación en contenedor y el trayecto marítimo internacional según las rutas navieras disponibles."
+    }
+  ],
+  "testimonials": [
+    {
+      "name": "Carlos M. (Chile)",
+      "content": "Excelente acompañamiento. Recibí mi Corolla Cross en San Antonio tal como lo planificamos. El reporte fotográfico en origen me dio total tranquilidad.",
+      "type": "Chile"
+    },
+    {
+      "name": "Sofía R. (Perú)",
+      "content": "El equipo de MLC Master China en Guangzhou revisó el número de chasis físicamente y me envió videos. La nacionalización en Callao fue muy sencilla con sus documentos.",
+      "type": "Perú"
+    },
+    {
+      "name": "Juan P. (Colombia)",
+      "content": "Muy serios y transparentes con el desglose de los costos de flete aduanal. Logré un ahorro importante comprando directo en origen.",
+      "type": "Colombia"
+    }
+  ],
+  "media_library": [
+    {
+      "name": "corolla-cross.png",
+      "path": "assets/corolla-cross.png",
+      "type": "Vehículos"
+    },
+    {
+      "name": "ceo-alex.png",
+      "path": "assets/ceo-alex.png",
+      "type": "CEO / Autoridad"
+    },
+    {
+      "name": "pdf-mockup.png",
+      "path": "assets/pdf-mockup.png",
+      "type": "Mockups"
+    },
+    {
+      "name": "logo.jpg",
+      "path": "assets/logo.jpg",
+      "type": "Logos"
+    }
+  ],
+  "page_settings": {
+    "whatsapp_phone": "8618072304859",
+    "instagram_followers": "280,000",
+    "toggle_vsl": true,
+    "toggle_reels": true,
+    "toggle_about": true,
+    "toggle_pdf": true,
+    "toggle_models": true,
+    "admin_user": "admin",
+    "admin_pass": "mlcmasterchina2026"
+  },
+  "pdf_config": {
+    "selected_vehicle_id": "1",
+    "title": "Ficha de Especificaciones Técnicas y Comerciales: Toyota Corolla Cross 2.0 Elite Edition",
+    "subtitle": "Catálogo de Importación Directa desde Origen (China)",
+    "summary": "Este documento oficial referencial consolida las especificaciones y equipamiento detallado de la versión Elite Edition para exportación. Adquiere tu vehículo al precio base de origen asistido por el equipo de profesionales logísticos de MLC Master China.",
+    "legal": "Este documento es de carácter estrictamente comercial e informativo. Las especificaciones finales del vehículo y las opciones de equipamiento están sujetas a variaciones del fabricante y a disponibilidad física al momento de formalizar la orden.",
+    "published_pdf_base64": ""
+  }
+}
