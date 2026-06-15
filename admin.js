@@ -434,6 +434,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 await MLCDatabase.saveDraft(currentDBState);
                 await MLCDatabase.saveLive(currentDBState);
 
+                // Auto-save default_db.json on disk if running on localhost
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    try {
+                        const saveResponse = await fetch('/api/save-db', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(currentDBState)
+                        });
+                        if (saveResponse.ok) {
+                            console.log('[Dev Server] default_db.json guardado automáticamente en disco.');
+                        } else {
+                            console.warn('[Dev Server] Error al intentar guardar default_db.json en disco.');
+                        }
+                    } catch (err) {
+                        console.info('[Dev Server] No se pudo guardar automáticamente en disco (servidor no disponible o estático).');
+                    }
+                }
+
                 // Verify it was actually written
                 const verifyLive = await MLCDatabase.getLive();
                 console.log('[PUBLISH] Número guardado en IndexedDB (verificación):', verifyLive.page_settings.whatsapp_phone);
