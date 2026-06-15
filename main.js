@@ -74,6 +74,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         await MLCDatabase.init();
         db = await MLCDatabase.getLive();
+        if (!db) {
+            // Try to initialize it from default_db.json first
+            let initialDB = null;
+            try {
+                const response = await fetch('default_db.json');
+                if (response.ok) {
+                    initialDB = await response.json();
+                    if (initialDB && initialDB.landing_texts && initialDB.page_settings) {
+                        console.log("[IndexedDB] Inicializando landing con default_db.json");
+                    } else {
+                        initialDB = null;
+                    }
+                }
+            } catch (err) {
+                console.info("[IndexedDB] No default_db.json found or failed to load.");
+            }
+            if (initialDB) {
+                await MLCDatabase.saveLive(initialDB);
+                await MLCDatabase.saveDraft(initialDB);
+                db = initialDB;
+            }
+        }
         if (db) {
             if (db.page_settings && db.page_settings.whatsapp_phone) {
                 WHATSAPP_PHONE = db.page_settings.whatsapp_phone.replace(/\D/g, ''); // strip non-digits

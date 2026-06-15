@@ -1730,6 +1730,20 @@
                             </div>
                         </div>
 
+                        <div class="form-section-card">
+                            <h3>Respaldo y Portabilidad de Datos</h3>
+                            <p class="section-desc">Exporta todos los datos cargados en el panel a un archivo JSON que puedes subir al repositorio para que sea la base de datos predeterminada de cualquier usuario que visite la web.</p>
+                            <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                                <button type="button" class="btn btn-secondary" id="btn-export-db" style="background-color: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
+                                    <span>📥 Exportar Datos (default_db.json)</span>
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btn-import-db-trigger" style="background-color: #0f766e; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.8rem;">
+                                    <span>📤 Importar Respaldo JSON</span>
+                                </button>
+                                <input type="file" id="import-db-file" style="display: none;" accept=".json">
+                            </div>
+                        </div>
+
                         <div class="floating-save-area">
                             <button type="submit" class="btn btn-primary">
                                 <span>Guardar Configuraciones ⚙️</span>

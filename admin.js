@@ -274,9 +274,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const draftDB = await MLCDatabase.getDraft();
 
         if (!liveDB) {
-            await MLCDatabase.saveLive(DEFAULT_DB);
-            await MLCDatabase.saveDraft(DEFAULT_DB);
-            currentDBState = JSON.parse(JSON.stringify(DEFAULT_DB));
+            let initialDB = DEFAULT_DB;
+            try {
+                const response = await fetch('default_db.json');
+                if (response.ok) {
+                    const fetchedDB = await response.json();
+                    if (fetchedDB && fetchedDB.landing_texts && fetchedDB.page_settings) {
+                        initialDB = fetchedDB;
+                        console.log("[IndexedDB] Inicializado con base de datos predeterminada (default_db.json) exitosamente.");
+                    }
+                }
+            } catch (err) {
+                console.info("[IndexedDB] No se encontró default_db.json personalizado. Utilizando DEFAULT_DB estático.");
+            }
+            await MLCDatabase.saveLive(initialDB);
+            await MLCDatabase.saveDraft(initialDB);
+            currentDBState = JSON.parse(JSON.stringify(initialDB));
         } else {
             // Load draft to continue editing
             currentDBState = draftDB || liveDB;
@@ -1776,6 +1789,52 @@ document.addEventListener('DOMContentLoaded', () => {
         clearVslVideoBtn.addEventListener('click', () => {
             if (vslYtUrlInput) vslYtUrlInput.value = '';
             updateVslYtPreview('');
+        });
+    }
+
+    // === DATA IMPORT / EXPORT LOGIC ===
+    const btnExport = document.getElementById('btn-export-db');
+    if (btnExport) {
+        btnExport.addEventListener('click', () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentDBState, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "default_db.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            logActivity("Datos exportados como default_db.json");
+        });
+    }
+
+    const btnImportTrigger = document.getElementById('btn-import-db-trigger');
+    const importFileEl = document.getElementById('import-db-file');
+    if (btnImportTrigger && importFileEl) {
+        btnImportTrigger.addEventListener('click', () => importFileEl.click());
+        importFileEl.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (evt) => {
+                try {
+                    const importedData = JSON.parse(evt.target.result);
+                    if (importedData && importedData.landing_texts && importedData.page_settings) {
+                        currentDBState = importedData;
+                        await MLCDatabase.saveDraft(currentDBState);
+                        await MLCDatabase.saveLive(currentDBState);
+                        loadAllFormsData();
+                        setUnpublishedChanges(false);
+                        logActivity("Respaldo JSON importado y publicado.");
+                        alert("🚀 ¡Respaldo importado y publicado con éxito!");
+                    } else {
+                        alert("❌ El archivo seleccionado no parece ser un respaldo válido de la base de datos de MLC.");
+                    }
+                } catch (err) {
+                    console.error("Error al importar el JSON:", err);
+                    alert("❌ Error al leer el archivo JSON: " + err.message);
+                }
+            };
+            reader.readAsText(file);
         });
     }
 });
