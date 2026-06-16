@@ -21,7 +21,9 @@ CREATE TABLE IF NOT EXISTS public.leads (
 -- Alerta: Estas políticas permiten acceso público. En el futuro, si lo requieres,
 -- puedes restringir permisos con RLS (Row Level Security).
 ALTER TABLE public.landing_state ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Permitir acceso anonimo a landing_state" ON public.landing_state;
 CREATE POLICY "Permitir acceso anonimo a landing_state" ON public.landing_state FOR ALL USING (true);
 
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Permitir acceso anonimo a leads" ON public.leads;
 CREATE POLICY "Permitir acceso anonimo a leads" ON public.leads FOR ALL USING (true);
