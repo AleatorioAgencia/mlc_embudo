@@ -287,9 +287,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize IndexedDB and migrate if necessary
         await MLCDatabase.init();
 
-        // Check if DB exists in IndexedDB
-        const liveDB = await MLCDatabase.getLive();
-        const draftDB = await MLCDatabase.getDraft();
+        // Check if DB exists in IndexedDB/Supabase in parallel to reduce network latency
+        const [liveDB, draftDB] = await Promise.all([
+            MLCDatabase.getLive(),
+            MLCDatabase.getDraft()
+        ]);
 
         if (!liveDB) {
             let initialDB = DEFAULT_DB;
