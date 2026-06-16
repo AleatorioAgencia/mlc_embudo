@@ -1938,20 +1938,43 @@ img {
 /* RESPONSIVE DESIGN (Mobile First) */
 @media (max-width: 1024px) {
     .hero-container {
-        grid-template-columns: 1fr;
-        gap: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
         text-align: center;
     }
     
+    .hero-content {
+        display: contents;
+    }
+    
+    .hero-title {
+        order: 1;
+    }
+    
+    .hero-image-container {
+        order: 2;
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .hero-description {
+        order: 3;
+    }
+    
     .hero-disclaimer {
+        order: 4;
         text-align: left;
     }
     
     .hero-actions {
+        order: 5;
         justify-content: center;
+        width: 100%;
     }
     
     .hero-trust-indicators {
+        order: 6;
         justify-content: center;
     }
     
