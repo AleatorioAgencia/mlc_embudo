@@ -7,13 +7,16 @@ CREATE TABLE IF NOT EXISTS public.landing_state (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 2. Tabla para los Leads (Prospectos)
-CREATE TABLE IF NOT EXISTS public.leads (
+-- 2. Tabla para los Leads (Prospectos) - Si ya existe, se elimina para actualizar las columnas
+DROP TABLE IF EXISTS public.leads CASCADE;
+
+CREATE TABLE public.leads (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nombre TEXT NOT NULL,
+    name TEXT NOT NULL,
     email TEXT NOT NULL,
     whatsapp TEXT,
-    fecha_descarga TEXT,
+    vehicle TEXT,
+    timestamp TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
