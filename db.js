@@ -4,8 +4,8 @@
 
 // INSTRUCCIONES: Reemplaza estas dos constantes con los datos de tu proyecto Supabase.
 // Puedes encontrar esto en tu dashboard de Supabase: Project Settings -> API
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://kxzejcyymwgcsdaavlz.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4enFlamN5eW13Z2NzZGFhdmx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDc1ODQsImV4cCI6MjA5NzEyMzU4NH0.x5T-HVb2qZS-8-jS9omrfv1iDW5uwzcdXP5i5QuHyys';
 
 // Si las claves no están configuradas, usará IndexedDB localmente como respaldo temporal.
 const isSupabaseConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
