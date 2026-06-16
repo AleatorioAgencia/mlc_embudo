@@ -294,6 +294,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (ceoDescEl) ceoDescEl.textContent = lt.ceo_desc;
             if (ceoQuoteEl) ceoQuoteEl.textContent = lt.ceo_quote;
 
+            // Render family points
+            for (let i = 1; i <= 3; i++) {
+                const pTitleEl = document.querySelector(`.authority-pillars .pillar-item:nth-child(${i}) h5`);
+                const pDescEl = document.querySelector(`.authority-pillars .pillar-item:nth-child(${i}) p`);
+                if (pTitleEl && lt[`fam_point_title_${i}`]) pTitleEl.textContent = lt[`fam_point_title_${i}`];
+                if (pDescEl && lt[`fam_point_desc_${i}`]) pDescEl.textContent = lt[`fam_point_desc_${i}`];
+            }
+
             // Section 8: Desglose de Costos
             const costTagEl = document.querySelector('#cost-section .section-tag');
             const costTitleEl = document.querySelector('#cost-section .section-title');

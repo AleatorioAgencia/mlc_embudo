@@ -19,6 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
             ceo_title: "Una Empresa Familiar Cuidando el Sueño de Tu Familia",
             ceo_desc: "Detrás de cada contenedor y cada trámite en Guangzhou, hay una familia real comprometida con la tuya. Sabemos que importar un vehículo no es solo una transacción; es una inversión importante y un sueño familiar. Por eso, supervisamos cada detalle en origen con el mismo cuidado y seriedad con el que protegemos a nuestra propia familia.",
             ceo_quote: "\"No somos una corporación fría en internet; somos personas reales, con valores familiares, trabajando desde China para darte la tranquilidad de que tu inversión llegará segura a casa.\"",
+            fam_point_title_1: "Cuidado en Origen",
+            fam_point_desc_1: "Revisamos personalmente cada detalle técnico (chasis, motor y componentes) como si fuera nuestro propio auto.",
+            fam_point_title_2: "Transparencia de Familia a Familia",
+            fam_point_desc_2: "Te enviamos fotos y videos detallados de tu vehículo específico para que sigas el proceso con total tranquilidad.",
+            fam_point_title_3: "Trámites y Aduana Seguros",
+            fam_point_desc_3: "Coordinamos y validamos toda la documentación oficial de exportación para asegurar un tránsito marítimo confiable.",
             wh_title: "¿Por qué hablar por WhatsApp con un asesor?",
             wh_desc: "Importar un vehículo es un proceso serio que involucra trámites aduaneros, cálculo de aranceles y logística de transporte. En MLC Master China no utilizamos respuestas automáticas de robots que no resuelven tus dudas. Al hacer clic en nuestro canal oficial:",
             cta_final_title: "Inicia tu proceso de importación asistida hoy",
@@ -735,6 +741,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('ceo-title-input').value = lt.ceo_title || "";
         document.getElementById('ceo-desc-input').value = lt.ceo_desc || "";
         document.getElementById('ceo-quote-input').value = lt.ceo_quote || "";
+        for (let i = 1; i <= 3; i++) {
+            if (document.getElementById(`fam-point-title-${i}-input`)) {
+                document.getElementById(`fam-point-title-${i}-input`).value = lt[`fam_point_title_${i}`] || "";
+            }
+            if (document.getElementById(`fam-point-desc-${i}-input`)) {
+                document.getElementById(`fam-point-desc-${i}-input`).value = lt[`fam_point_desc_${i}`] || "";
+            }
+        }
 
         // Section 8
         if (document.getElementById('costs-tag-input')) document.getElementById('costs-tag-input').value = lt.costs_tag || "";
@@ -930,6 +944,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('ceo-title-input')) lt.ceo_title = document.getElementById('ceo-title-input').value;
         if (document.getElementById('ceo-desc-input')) lt.ceo_desc = document.getElementById('ceo-desc-input').value;
         if (document.getElementById('ceo-quote-input')) lt.ceo_quote = document.getElementById('ceo-quote-input').value;
+        for (let i = 1; i <= 3; i++) {
+            if (document.getElementById(`fam-point-title-${i}-input`)) {
+                lt[`fam_point_title_${i}`] = document.getElementById(`fam-point-title-${i}-input`).value;
+            }
+            if (document.getElementById(`fam-point-desc-${i}-input`)) {
+                lt[`fam_point_desc_${i}`] = document.getElementById(`fam-point-desc-${i}-input`).value;
+            }
+        }
 
         // Section 8
         if (document.getElementById('costs-tag-input')) lt.costs_tag = document.getElementById('costs-tag-input').value;
