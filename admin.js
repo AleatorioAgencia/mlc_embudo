@@ -1027,7 +1027,7 @@ document.addEventListener('DOMContentLoaded', () => {
             vehicleCrudForm.reset();
             // Reset image path and preview
             document.getElementById('veh-image-path').value = "";
-            document.getElementById('veh-img-preview').src = "";
+            document.getElementById('veh-img-preview').src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
             vehicleModal.style.display = 'flex';
         });
     }
@@ -1045,8 +1045,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentDBState.vehicles.forEach(v => {
             const tr = document.createElement('tr');
+            const hasImg = v.image && v.image.trim() !== "" && !v.image.includes('corolla-cross.png');
+            const icon = v.name.toLowerCase().includes('cross') || v.name.toLowerCase().includes('rav4') ? '🚙' : '🚗';
+            const imgCell = hasImg 
+                ? `<img src="${v.image}" class="table-img-prev" alt="${v.name}">` 
+                : `<div class="table-img-prev" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:var(--bg-surface-admin);">${icon}</div>`;
+                
             tr.innerHTML = `
-                <td><img src="${v.image}" class="table-img-prev" alt="${v.name}"></td>
+                <td>${imgCell}</td>
                 <td><strong>${v.name}</strong><br><span style="font-size:0.75rem;color:var(--text-muted);">${v.short_desc}</span></td>
                 <td>USD ${v.price}</td>
                 <td><span style="font-size:0.8rem;">⚙️ ${v.motor} | 🎮 ${v.transmision}</span></td>
@@ -1078,8 +1084,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('veh-security').value = v.seguridad;
                     document.getElementById('veh-tech').value = v.tecnologia;
                     document.getElementById('veh-observations').value = v.observaciones;
-                    document.getElementById('veh-image-path').value = v.image;
-                    document.getElementById('veh-img-preview').src = v.image || "";
+                    const hasImg = v.image && v.image.trim() !== "" && !v.image.includes('corolla-cross.png');
+                    const fallbackGif = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+                    document.getElementById('veh-image-path').value = hasImg ? v.image : "";
+                    document.getElementById('veh-img-preview').src = hasImg ? v.image : fallbackGif;
                     document.getElementById('veh-status').value = v.status;
                     
                     vehicleModal.style.display = 'flex';
@@ -1175,8 +1183,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Populate gallery previews and captions
         for (let i = 1; i <= 6; i++) {
             const imgPath = pConfig[`gallery_img_${i}`] || "";
-            document.getElementById(`pdf-gal-img-${i}-path`).value = imgPath;
-            document.getElementById(`pdf-gal-img-${i}-prev`).src = imgPath;
+            const hasImg = imgPath && imgPath.trim() !== "" && !imgPath.includes('corolla-cross.png');
+            const fallbackGif = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            document.getElementById(`pdf-gal-img-${i}-path`).value = hasImg ? imgPath : "";
+            document.getElementById(`pdf-gal-img-${i}-prev`).src = hasImg ? imgPath : fallbackGif;
             document.getElementById(`pdf-gal-cap-${i}`).value = pConfig[`gallery_cap_${i}`] || "Detalle interior";
         }
     }

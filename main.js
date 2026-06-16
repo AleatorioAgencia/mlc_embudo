@@ -583,10 +583,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const badgeText = v.name.toLowerCase().includes('híb') || v.name.toLowerCase().includes('hyb') ? 'Híbrido' : 'SUV Premium';
                         const icon = v.name.toLowerCase().includes('cross') || v.name.toLowerCase().includes('rav4') ? '🚙' : '🚗';
                         
+                        const hasCustomImg = v.image && v.image.trim() !== "" && !v.image.includes('corolla-cross.png');
+                        const imgHtml = hasCustomImg 
+                            ? `<img src="${v.image}" style="width: 100%; height: 100%; object-fit: cover; display: block;" alt="${v.name}">` 
+                            : `<div class="car-placeholder-icon">${icon}</div>`;
+
                         card.innerHTML = `
                             <div class="model-card-badge">${badgeText}</div>
                             <div class="model-card-image">
-                                <div class="car-placeholder-icon">${icon}</div>
+                                ${imgHtml}
                             </div>
                             <div class="model-card-info">
                                 <h3>${v.name}</h3>
