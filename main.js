@@ -580,7 +580,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const card = document.createElement('div');
                         card.className = "model-card";
                         
-                        const badgeText = v.name.toLowerCase().includes('híb') || v.name.toLowerCase().includes('hyb') ? 'Híbrido' : 'SUV Premium';
+                        const badgeText = v.badge || (v.name.toLowerCase().includes('híb') || v.name.toLowerCase().includes('hyb') ? 'Híbrido' : 'SUV Premium');
                         const icon = v.name.toLowerCase().includes('cross') || v.name.toLowerCase().includes('rav4') ? '🚙' : '🚗';
                         
                         const hasCustomImg = v.image && v.image.trim() !== "" && !v.image.includes('corolla-cross.png');

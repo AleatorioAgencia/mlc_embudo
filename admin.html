@@ -1143,7 +1143,13 @@
                                             <input type="text" id="models-subtitle-input" class="form-control" required>
                                         </div>
                                     </div>
-                                    <p class="input-helper" style="margin-top:10px;">*Nota: Las fotos y detalles de cada vehículo individual se editan en la pestaña superior "Gestión Vehículos (CRUD)".</p>
+                                    <div style="margin-top: 20px; border-top: 1px solid var(--border-admin); padding-top: 20px;">
+                                        <h4 style="margin-bottom: 15px; font-family: var(--font-heading); color: var(--text-sec);">Tarjetas de Modelos Disponibles</h4>
+                                        <div id="section-models-list-container">
+                                            <!-- Dynamic cards will be rendered here -->
+                                        </div>
+                                    </div>
+                                    <p class="input-helper" style="margin-top:10px;">*Nota: Las fotos y detalles de cada vehículo individual también se pueden editar en la pestaña superior "Gestión Vehículos (CRUD)".</p>
                                 </div>
 
                                 <!-- SECCIÓN 12: SECCIÓN WHATSAPP -->
@@ -1493,7 +1499,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-row-2">
+                                <div class="form-row-3">
                                     <div class="form-group">
                                         <label>Imagen Destacada del Vehículo</label>
                                         <div class="direct-media-uploader">
@@ -1503,12 +1509,16 @@
                                             <div class="media-upload-actions">
                                                 <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="veh-img-file">
                                                     <span>Subir Imagen del Auto 📤</span>
-                                                </button>
+                                                 </button>
                                                 <input type="file" id="veh-img-file" style="display: none;" accept="image/*">
                                                 <input type="hidden" id="veh-image-path" required>
                                                 <span class="input-helper">Sube una imagen o utiliza una por defecto. Se convertirá a base64.</span>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="veh-badge">Badge / Etiqueta Corta</label>
+                                        <input type="text" id="veh-badge" class="form-control" placeholder="Ej: Híbrido, SUV Premium">
                                     </div>
                                     <div class="form-group">
                                         <label for="veh-status">Estado de Publicación</label>

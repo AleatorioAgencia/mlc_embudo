@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tecnologia: "Infoentretenimiento premium táctil, Bluetooth, USB",
                 observaciones: "Precio base FOB referencial en China. No incluye aranceles locales ni flete.",
                 image: "",
+                badge: "Destacado",
                 status: "active"
             },
             {
@@ -173,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tecnologia: "Pantalla multimedia táctil, Apple CarPlay, Android Auto",
                 observaciones: "Sujeto a disponibilidad física en stock de exportación origen.",
                 image: "",
+                badge: "Híbrido",
                 status: "active"
             },
             {
@@ -188,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tecnologia: "Climatizador bizona, panel digital, puertos de carga rápida",
                 observaciones: "Tarifas de flete y aranceles varían por país de destino.",
                 image: "",
+                badge: "SUV Premium",
                 status: "active"
             }
         ],
@@ -786,6 +789,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('models-tag-input')) document.getElementById('models-tag-input').value = lt.models_tag || "";
         if (document.getElementById('models-title-input')) document.getElementById('models-title-input').value = lt.models_title || "";
         if (document.getElementById('models-subtitle-input')) document.getElementById('models-subtitle-input').value = lt.models_subtitle || "";
+        renderSection11Models();
 
         // Section 12
         document.getElementById('wh-title-input').value = lt.wh_title || "";
@@ -1000,6 +1004,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // Section 16
         if (document.getElementById('footer-desc-input')) lt.footer_desc = document.getElementById('footer-desc-input').value;
         if (document.getElementById('footer-address-input')) lt.footer_address = document.getElementById('footer-address-input').value;
+
+        // Sync Section 11 vehicles texts
+        document.querySelectorAll('.sec11-veh-name').forEach(inp => {
+            const id = inp.getAttribute('data-id');
+            const v = currentDBState.vehicles.find(item => item.id === id);
+            if (v) v.name = inp.value;
+        });
+        document.querySelectorAll('.sec11-veh-badge').forEach(inp => {
+            const id = inp.getAttribute('data-id');
+            const v = currentDBState.vehicles.find(item => item.id === id);
+            if (v) v.badge = inp.value;
+        });
+        document.querySelectorAll('.sec11-veh-desc').forEach(inp => {
+            const id = inp.getAttribute('data-id');
+            const v = currentDBState.vehicles.find(item => item.id === id);
+            if (v) v.short_desc = inp.value;
+        });
     }
 
     // === TAB 2: SUBMIT LANDING TEXTS ===
@@ -1088,6 +1109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const fallbackGif = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
                     document.getElementById('veh-image-path').value = hasImg ? v.image : "";
                     document.getElementById('veh-img-preview').src = hasImg ? v.image : fallbackGif;
+                    document.getElementById('veh-badge').value = v.badge || "";
                     document.getElementById('veh-status').value = v.status;
                     
                     vehicleModal.style.display = 'flex';
@@ -1129,6 +1151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tecnologia: document.getElementById('veh-tech').value,
                 observaciones: document.getElementById('veh-observations').value,
                 image: document.getElementById('veh-image-path').value,
+                badge: document.getElementById('veh-badge').value,
                 status: document.getElementById('veh-status').value
             };
 
@@ -1146,6 +1169,129 @@ document.addEventListener('DOMContentLoaded', () => {
             saveDraftToStore();
             vehicleModal.style.display = 'none';
             renderVehiclesTable();
+        });
+    }
+    function renderSection11Models() {
+        const container = document.getElementById('section-models-list-container');
+        if (!container) return;
+        container.innerHTML = "";
+
+        const primaryId = currentDBState.pdf_config.selected_vehicle_id || "1";
+        const secondaryVehicles = currentDBState.vehicles.filter(v => v.id !== primaryId);
+
+        if (secondaryVehicles.length === 0) {
+            container.innerHTML = `<p style="color:var(--text-muted);font-style:italic;">No hay otros modelos registrados. Agrega vehículos en la pestaña superior "Gestión Vehículos (CRUD)".</p>`;
+            return;
+        }
+
+        secondaryVehicles.forEach(v => {
+            const hasImg = v.image && v.image.trim() !== "" && !v.image.includes('corolla-cross.png');
+            const fallbackGif = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+            const card = document.createElement('div');
+            card.className = "sec11-vehicle-card-editor";
+            card.style.cssText = "border: 1px solid var(--border-admin); border-radius: 8px; padding: 15px; margin-bottom: 15px; background: rgba(255,255,255,0.02);";
+            
+            card.innerHTML = `
+                <h5 style="margin-bottom: 10px; color: var(--gold-primary); font-family: var(--font-heading); font-size:1rem;">Modelo: ${v.name}</h5>
+                <div class="form-row-3">
+                    <div class="form-group-col" style="flex: 1;">
+                        <label style="color:var(--text-muted);">Título del Modelo</label>
+                        <input type="text" class="form-control sec11-veh-name" data-id="${v.id}" value="${v.name}" required>
+                    </div>
+                    <div class="form-group-col" style="flex: 1;">
+                        <label style="color:var(--text-muted);">Badge / Categoría</label>
+                        <input type="text" class="form-control sec11-veh-badge" data-id="${v.id}" value="${v.badge || ''}" placeholder="Ej: Híbrido, SUV Premium..." required>
+                    </div>
+                    <div class="form-group-col" style="flex: 2;">
+                        <label style="color:var(--text-muted);">Descripción Corta (aparece en tarjeta)</label>
+                        <input type="text" class="form-control sec11-veh-desc" data-id="${v.id}" value="${v.short_desc}" required>
+                    </div>
+                </div>
+                <div class="form-row" style="margin-top: 10px;">
+                    <div class="form-group-col">
+                        <label style="color:var(--text-muted);">Imagen del Modelo</label>
+                        <div class="direct-media-uploader" style="margin-top: 5px;">
+                            <div class="media-upload-preview" id="sec11-veh-img-preview-container-${v.id}" style="width: 80px; height: 50px; border-radius: 4px; overflow: hidden; background: #000; border: 1px solid var(--border-admin); display: flex; align-items: center; justify-content: center;">
+                                <img src="${hasImg ? v.image : fallbackGif}" id="sec11-veh-img-preview-${v.id}" style="width:100%; height:100%; object-fit:cover;" alt="Vista previa">
+                            </div>
+                            <div class="media-upload-actions">
+                                <button type="button" class="btn btn-secondary btn-sm sec11-upload-trigger" data-id="${v.id}">
+                                    <span>Subir Imagen 📤</span>
+                                </button>
+                                <input type="file" id="sec11-veh-img-file-${v.id}" class="sec11-file-input" data-id="${v.id}" style="display: none;" accept="image/*">
+                                <input type="hidden" id="sec11-veh-image-path-${v.id}" class="sec11-path-input" data-id="${v.id}" value="${v.image || ''}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // Bind event delegation for Section 11 dynamic cards
+    const sec11Container = document.getElementById('section-models-list-container');
+    if (sec11Container) {
+        sec11Container.addEventListener('click', (e) => {
+            const trigger = e.target.closest('.sec11-upload-trigger');
+            if (trigger) {
+                const id = trigger.getAttribute('data-id');
+                const fileInput = document.getElementById(`sec11-veh-img-file-${id}`);
+                if (fileInput) fileInput.click();
+            }
+        });
+
+        sec11Container.addEventListener('change', async (e) => {
+            const fileInput = e.target.closest('.sec11-file-input');
+            if (fileInput) {
+                const id = fileInput.getAttribute('data-id');
+                const file = fileInput.files[0];
+                if (!file) return;
+
+                const previewEl = document.getElementById(`sec11-veh-img-preview-${id}`);
+                const pathEl = document.getElementById(`sec11-veh-image-path-${id}`);
+                
+                if (previewEl) previewEl.style.opacity = '0.5';
+
+                let cloudUrl = null;
+                try {
+                    cloudUrl = await MLCDatabase.uploadFile(file);
+                } catch (err) {
+                    console.error("[Storage] Error subiendo archivo a Supabase Storage:", err);
+                }
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const finalData = cloudUrl || event.target.result;
+                    if (previewEl) {
+                        previewEl.src = finalData;
+                        previewEl.style.opacity = '1';
+                    }
+                    if (pathEl) pathEl.value = finalData;
+                    
+                    const v = currentDBState.vehicles.find(item => item.id === id);
+                    if (v) {
+                        v.image = finalData;
+                        saveDraftToStore();
+                        renderVehiclesTable();
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        sec11Container.addEventListener('input', (e) => {
+            const inp = e.target.closest('.sec11-veh-name, .sec11-veh-badge, .sec11-veh-desc');
+            if (inp) {
+                const id = inp.getAttribute('data-id');
+                const v = currentDBState.vehicles.find(item => item.id === id);
+                if (v) {
+                    if (inp.classList.contains('sec11-veh-name')) v.name = inp.value;
+                    if (inp.classList.contains('sec11-veh-badge')) v.badge = inp.value;
+                    if (inp.classList.contains('sec11-veh-desc')) v.short_desc = inp.value;
+                    saveDraftToStore();
+                }
+            }
         });
     }
 

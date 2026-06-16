@@ -132,7 +132,8 @@
       "tecnologia": "Infoentretenimiento premium táctil, Bluetooth, USB",
       "observaciones": "Precio base FOB referencial en China. No incluye aranceles locales ni flete.",
       "image": "",
-      "status": "active"
+      "status": "active",
+      "badge": "Destacado"
     },
     {
       "id": "2",
@@ -147,7 +148,8 @@
       "tecnologia": "Pantalla multimedia táctil, Apple CarPlay, Android Auto",
       "observaciones": "Sujeto a disponibilidad física en stock de exportación origen.",
       "image": "",
-      "status": "active"
+      "status": "active",
+      "badge": "Híbrido"
     },
     {
       "id": "3",
@@ -162,7 +164,8 @@
       "tecnologia": "Climatizador bizona, panel digital, puertos de carga rápida",
       "observaciones": "Tarifas de flete y aranceles varían por país de destino.",
       "image": "",
-      "status": "active"
+      "status": "active",
+      "badge": "SUV Premium"
     }
   ],
   "faqs": [
