@@ -15,6 +15,14 @@ if (isSupabaseConfigured && window.supabase) {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
+// Helper para prevenir bloqueos de red (Hangs) mediante un límite de tiempo (Timeout) de 3 segundos
+const withTimeout = (promise, ms = 3000) => {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Supabase request timeout")), ms))
+    ]);
+};
+
 const MLCDatabase = {
     dbName: 'mlc_landing_db',
     dbVersion: 1,
@@ -55,11 +63,14 @@ const MLCDatabase = {
     async get(key) {
         if (isSupabaseConfigured && supabaseClient) {
             try {
-                const { data, error } = await supabaseClient
-                    .from('landing_state')
-                    .select('data')
-                    .eq('id', key)
-                    .single();
+                const { data, error } = await withTimeout(
+                    supabaseClient
+                        .from('landing_state')
+                        .select('data')
+                        .eq('id', key)
+                        .single(),
+                    3000
+                );
                 
                 if (error && error.code !== 'PGRST116') { // PGRST116 = No rows found
                     throw error;
@@ -100,9 +111,12 @@ const MLCDatabase = {
 
         if (isSupabaseConfigured && supabaseClient) {
             try {
-                const { error } = await supabaseClient
-                    .from('landing_state')
-                    .upsert({ id: key, data: val }, { onConflict: 'id' });
+                const { error } = await withTimeout(
+                    supabaseClient
+                        .from('landing_state')
+                        .upsert({ id: key, data: val }, { onConflict: 'id' }),
+                    3500
+                );
                 
                 if (error) throw error;
                 console.log(`[Supabase] Guardado con éxito: ${key}`);
@@ -131,10 +145,13 @@ const MLCDatabase = {
     async getLeads() {
         if (isSupabaseConfigured && supabaseClient) {
             try {
-                const { data, error } = await supabaseClient
-                    .from('leads')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+                const { data, error } = await withTimeout(
+                    supabaseClient
+                        .from('leads')
+                        .select('*')
+                        .order('created_at', { ascending: false }),
+                    3000
+                );
                 
                 if (error) throw error;
                 return data || [];
@@ -157,9 +174,12 @@ const MLCDatabase = {
     async addLead(lead) {
         if (isSupabaseConfigured && supabaseClient) {
             try {
-                const { error } = await supabaseClient
-                    .from('leads')
-                    .insert([lead]);
+                const { error } = await withTimeout(
+                    supabaseClient
+                        .from('leads')
+                        .insert([lead]),
+                    3000
+                );
                 if (error) throw error;
                 console.log("[Supabase] Lead guardado exitosamente");
             } catch (err) {
@@ -186,13 +206,16 @@ const MLCDatabase = {
             const fileExt = file.name.split('.').pop();
             const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
             
-            const { data, error } = await supabaseClient
-                .storage
-                .from('cms_media')
-                .upload(fileName, file, {
-                    cacheControl: '3600',
-                    upsert: true
-                });
+            const { data, error } = await withTimeout(
+                supabaseClient
+                    .storage
+                    .from('cms_media')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: true
+                    }),
+                8000 // Timeout extendido de 8 segundos para subidas de archivos
+            );
             
             if (error) throw error;
             
