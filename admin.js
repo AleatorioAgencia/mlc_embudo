@@ -392,6 +392,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            
+            if (!currentDBState) {
+                alert("⚠️ La base de datos aún se está conectando con Supabase. Por favor, espera un momento y vuelve a intentarlo.");
+                return;
+            }
+
             const userVal = document.getElementById('login-username').value;
             const passVal = document.getElementById('login-password').value;
 
