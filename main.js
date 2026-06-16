@@ -377,6 +377,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const container = pdfMockupImg.closest('.pdf-container');
                     if (container) container.style.gridTemplateColumns = '';
                     pdfMockupImg.src = lt.pdf_mockup_img;
+                    pdfMockupImg.style.display = '';
                 }
             }
 
