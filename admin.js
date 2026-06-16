@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
             footer_desc: "Especialistas en acompañamiento comercial, revisión de mercancía e importación directa desde China para el mercado hispanoamericano.",
             footer_address: "Room 1802, Jinying Building, No. 316 Huanshi Road Middle, Yuexiu District, Guangzhou, China.",
             brand_logo: "assets/logo.jpg",
-            ceo_profile_img: "assets/ceo-alex.png",
-            vsl_thumbnail_img: "assets/ceo-alex.png",
+            ceo_profile_img: "",
+            vsl_thumbnail_img: "",
             vsl_video_path: "",
             vsl_youtube_url: "",
 
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             about_desc_1: "En MLC Master China no operamos como comisionistas digitales improvisados. Somos una estructura de comercio internacional con oficinas corporativas en Guangzhou y almacenes de consolidación en Yiwu. Representamos a empresarios y compradores de habla hispana directamente desde el origen comercial del mundo.",
             about_desc_2: "Nuestra transparencia, seriedad y control riguroso nos han permitido construir una de las comunidades de importación asistida más sólidas y confiables de Latinoamérica:",
             about_ig_followers: "280,000",
-            about_ig_screenshot: "assets/instagram-screenshot.png",
+            about_ig_screenshot: "",
 
             // Section 6: Reels de Operaciones en Puerto
             reels_tag: "OPERACIONES EN VIDEO",
@@ -60,25 +60,25 @@ document.addEventListener('DOMContentLoaded', () => {
             reel1_title: "Inspección Corolla Cross",
             reel1_desc: "Revisión detallada de chasis, soldaduras y cableado eléctrico en puerto de origen.",
             reel1_views: "84K",
-            reel1_thumb: "assets/ceo-alex.png",
+            reel1_thumb: "",
             reel1_video: "",
             reel1_youtube_url: "",
             reel2_title: "Consolidación de Contenedor",
             reel2_desc: "Trincado y fijación del vehículo para evitar daños en el tránsito marítimo.",
             reel2_views: "112K",
-            reel2_thumb: "assets/ceo-alex.png",
+            reel2_thumb: "",
             reel2_video: "",
             reel2_youtube_url: "",
             reel3_title: "Oficinas en Guangzhou",
             reel3_desc: "Nuestro equipo coordinando la facturación y licencias de exportación de aduana.",
             reel3_views: "95K",
-            reel3_thumb: "assets/ceo-alex.png",
+            reel3_thumb: "",
             reel3_video: "",
             reel3_youtube_url: "",
             reel4_title: "Testimonio de Despacho",
             reel4_desc: "Clientes recibiendo su B/L oficial de embarque marítimo y validando documentos.",
             reel4_views: "72K",
-            reel4_thumb: "assets/ceo-alex.png",
+            reel4_thumb: "",
             reel4_video: "",
             reel4_youtube_url: "",
 
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Section 10: PDF Promo
             pdf_promo_title: "Ficha Técnica Oficial del Vehículo",
             pdf_promo_desc: "Descarga de forma directa el documento en PDF que contiene las especificaciones detalladas de exportación de la Toyota Corolla Cross 2.0 Elite Edition. Conoce cada dato de motorización, dimensiones, capacidades y equipamiento.",
-            pdf_mockup_img: "assets/pdf-mockup.png",
+            pdf_mockup_img: "",
 
             // Section 11: Otros Modelos
             models_tag: "MÁS OPCIONES",
@@ -128,13 +128,13 @@ document.addEventListener('DOMContentLoaded', () => {
             gallery_subtitle: "Imágenes reales de la supervisión de carga y despachos documentales realizados.",
             gal1_title: "Verificación de Chasis",
             gal1_desc: "Inspección del número de serie y estructura del motor de los autos antes de sellar el contenedor en puerto chino.",
-            gal1_img: "assets/corolla-cross.png",
+            gal1_img: "",
             gal2_title: "Consolidación en Contenedor",
             gal2_desc: "Trincado y aseguramiento especial en almacén para evitar movimientos durante el tránsito marítimo internacional.",
-            gal2_img: "assets/corolla-cross.png",
+            gal2_img: "",
             gal3_title: "Soporte de Carga Listo",
             gal3_desc: "Documentación comercial (B/L, packing list y facturas) validada y lista para despacho en las aduanas de destino.",
-            gal3_img: "assets/corolla-cross.png",
+            gal3_img: "",
 
             // Section 14: Preguntas Frecuentes Cabecera
             faqs_tag: "RESOLVIENDO DUDAS",
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 seguridad: "ABS, EBD, VSC, HAC, 7 Airbags",
                 tecnologia: "Infoentretenimiento premium táctil, Bluetooth, USB",
                 observaciones: "Precio base FOB referencial en China. No incluye aranceles locales ni flete.",
-                image: "assets/corolla-cross.png",
+                image: "",
                 status: "active"
             },
             {
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 seguridad: "Toyota Safety Sense, ABS, VSC, 6 Airbags",
                 tecnologia: "Pantalla multimedia táctil, Apple CarPlay, Android Auto",
                 observaciones: "Sujeto a disponibilidad física en stock de exportación origen.",
-                image: "assets/corolla-cross.png",
+                image: "",
                 status: "active"
             },
             {
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 seguridad: "Frenado autónomo, control dinámico de carril, 7 Airbags",
                 tecnologia: "Climatizador bizona, panel digital, puertos de carga rápida",
                 observaciones: "Tarifas de flete y aranceles varían por país de destino.",
-                image: "assets/corolla-cross.png",
+                image: "",
                 status: "active"
             }
         ],
@@ -205,9 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { name: "Juan P. (Colombia)", content: "Muy serios y transparentes con el desglose de los costos de flete aduanal. Logré un ahorro importante comprando directo en origen.", type: "Colombia" }
         ],
         media_library: [
-            { name: "corolla-cross.png", path: "assets/corolla-cross.png", type: "Vehículos" },
-            { name: "ceo-alex.png", path: "assets/ceo-alex.png", type: "CEO / Autoridad" },
-            { name: "pdf-mockup.png", path: "assets/pdf-mockup.png", type: "Mockups" },
+            { name: "corolla-cross.png", path: "", type: "Vehículos" },
+            { name: "ceo-alex.png", path: "", type: "CEO / Autoridad" },
+            { name: "pdf-mockup.png", path: "", type: "Mockups" },
             { name: "logo.jpg", path: "assets/logo.jpg", type: "Logos" }
         ],
         page_settings: {
@@ -234,12 +234,12 @@ document.addEventListener('DOMContentLoaded', () => {
             spec_entrega: "Inmediata / Importación Directa",
             spec_idioma: "Español",
             spec_asientos: "Tela",
-            gallery_img_1: "assets/corolla-cross.png",
-            gallery_img_2: "assets/corolla-cross.png",
-            gallery_img_3: "assets/corolla-cross.png",
-            gallery_img_4: "assets/corolla-cross.png",
-            gallery_img_5: "assets/corolla-cross.png",
-            gallery_img_6: "assets/corolla-cross.png",
+            gallery_img_1: "",
+            gallery_img_2: "",
+            gallery_img_3: "",
+            gallery_img_4: "",
+            gallery_img_5: "",
+            gallery_img_6: "",
             gallery_cap_1: "Detalle interior",
             gallery_cap_2: "Detalle interior",
             gallery_cap_3: "Detalle interior",
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Migration: Ensure about_ig_screenshot exists
         if (currentDBState.landing_texts && !currentDBState.landing_texts.about_ig_screenshot) {
-            currentDBState.landing_texts.about_ig_screenshot = "assets/instagram-screenshot.png";
+            currentDBState.landing_texts.about_ig_screenshot = "";
         }
 
         // Migration: Ensure hero_youtube_url exists (added in later version)
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pc.spec_asientos === undefined) pc.spec_asientos = "Tela";
             
             for (let i = 1; i <= 6; i++) {
-                if (pc[`gallery_img_${i}`] === undefined) pc[`gallery_img_${i}`] = "assets/corolla-cross.png";
+                if (pc[`gallery_img_${i}`] === undefined) pc[`gallery_img_${i}`] = "";
                 if (pc[`gallery_cap_${i}`] === undefined) pc[`gallery_cap_${i}`] = "Detalle interior";
             }
         }
@@ -697,9 +697,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Instagram Screenshot Preview
         const igScreenshotPrev = document.getElementById('about-ig-screenshot-preview');
-        if (igScreenshotPrev) igScreenshotPrev.src = lt.about_ig_screenshot || "assets/instagram-screenshot.png";
+        if (igScreenshotPrev) igScreenshotPrev.src = lt.about_ig_screenshot || "";
         const wfIgScreenshotPrev = document.getElementById('wf-ig-screenshot-preview');
-        if (wfIgScreenshotPrev) wfIgScreenshotPrev.style.backgroundImage = `url('${lt.about_ig_screenshot || "assets/instagram-screenshot.png"}')`;
+        if (wfIgScreenshotPrev) wfIgScreenshotPrev.style.backgroundImage = `url('${lt.about_ig_screenshot || ""}')`;
 
         // Section 5
         document.getElementById('vsl-title-input').value = lt.vsl_title || "";
@@ -722,7 +722,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById(`reel${i}-views-input`)) document.getElementById(`reel${i}-views-input`).value = lt[`reel${i}_views`] || "";
             
             const reelThumbPrev = document.getElementById(`reel${i}-thumb-preview`);
-            if (reelThumbPrev) reelThumbPrev.src = lt[`reel${i}_thumb`] || "assets/ceo-alex.png";
+            if (reelThumbPrev) reelThumbPrev.src = lt[`reel${i}_thumb`] || "";
             
             const reelStatus = document.getElementById(`reel${i}-video-status`);
             if (reelStatus) {
@@ -772,7 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('pdf-promo-desc-input')) document.getElementById('pdf-promo-desc-input').value = lt.pdf_promo_desc || "";
         
         const pdfMockupPrev = document.getElementById('pdf-mockup-preview');
-        if (pdfMockupPrev) pdfMockupPrev.src = lt.pdf_mockup_img || "assets/pdf-mockup.png";
+        if (pdfMockupPrev) pdfMockupPrev.src = lt.pdf_mockup_img || "";
 
         // Section 11
         if (document.getElementById('models-tag-input')) document.getElementById('models-tag-input').value = lt.models_tag || "";
@@ -793,7 +793,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById(`gal${i}-desc-input`)) document.getElementById(`gal${i}-desc-input`).value = lt[`gal${i}_desc`] || "";
             
             const galImgPrev = document.getElementById(`gal${i}-img-preview`);
-            if (galImgPrev) galImgPrev.src = lt[`gal${i}_img`] || "assets/corolla-cross.png";
+            if (galImgPrev) galImgPrev.src = lt[`gal${i}_img`] || "";
         }
 
         // Section 14
@@ -815,13 +815,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const wfFooterLogo = document.getElementById('wf-footer-logo-preview');
         if (wfFooterLogo) wfFooterLogo.style.backgroundImage = `url(${logoPath})`;
 
-        const ceoPath = lt.ceo_profile_img || "assets/ceo-alex.png";
+        const ceoPath = lt.ceo_profile_img || "";
         const ceoPreview = document.getElementById('ceo-img-preview');
         if (ceoPreview) ceoPreview.src = ceoPath;
         const wfCeoProfile = document.getElementById('wf-ceo-profile-preview');
         if (wfCeoProfile) wfCeoProfile.style.backgroundImage = `url(${ceoPath})`;
 
-        const vslThumbPath = lt.vsl_thumbnail_img || "assets/ceo-alex.png";
+        const vslThumbPath = lt.vsl_thumbnail_img || "";
         const vslThumbPreview = document.getElementById('vsl-thumb-preview');
         if (vslThumbPreview) vslThumbPreview.src = vslThumbPath;
         const wfVslVideo = document.getElementById('wf-vsl-video-box');
@@ -1018,8 +1018,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('veh-id').value = "";
             vehicleCrudForm.reset();
             // Reset image path and preview
-            document.getElementById('veh-image-path').value = "assets/corolla-cross.png";
-            document.getElementById('veh-img-preview').src = "assets/corolla-cross.png";
+            document.getElementById('veh-image-path').value = "";
+            document.getElementById('veh-img-preview').src = "";
             vehicleModal.style.display = 'flex';
         });
     }
@@ -1071,7 +1071,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('veh-tech').value = v.tecnologia;
                     document.getElementById('veh-observations').value = v.observaciones;
                     document.getElementById('veh-image-path').value = v.image;
-                    document.getElementById('veh-img-preview').src = v.image || "assets/corolla-cross.png";
+                    document.getElementById('veh-img-preview').src = v.image || "";
                     document.getElementById('veh-status').value = v.status;
                     
                     vehicleModal.style.display = 'flex';
@@ -1166,7 +1166,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Populate gallery previews and captions
         for (let i = 1; i <= 6; i++) {
-            const imgPath = pConfig[`gallery_img_${i}`] || "assets/corolla-cross.png";
+            const imgPath = pConfig[`gallery_img_${i}`] || "";
             document.getElementById(`pdf-gal-img-${i}-path`).value = imgPath;
             document.getElementById(`pdf-gal-img-${i}-prev`).src = imgPath;
             document.getElementById(`pdf-gal-cap-${i}`).value = pConfig[`gallery_cap_${i}`] || "Detalle interior";

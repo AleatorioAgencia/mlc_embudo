@@ -203,7 +203,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const igScreenshotImg = document.getElementById('instagram-screenshot-img');
             if (igScreenshotImg) {
-                igScreenshotImg.src = lt.about_ig_screenshot || "assets/instagram-screenshot.png";
+                const isDefaultIg = !lt.about_ig_screenshot || lt.about_ig_screenshot === "" || lt.about_ig_screenshot.includes('instagram-screenshot.png');
+                const side = igScreenshotImg.closest('.instagram-feed-side-screenshot');
+                if (isDefaultIg) {
+                    if (side) side.style.display = 'none';
+                    const grid = document.querySelector('.instagram-grid');
+                    if (grid) grid.style.gridTemplateColumns = '1fr';
+                } else {
+                    if (side) side.style.display = '';
+                    const grid = document.querySelector('.instagram-grid');
+                    if (grid) grid.style.gridTemplateColumns = '';
+                    igScreenshotImg.src = lt.about_ig_screenshot;
+                }
             }
 
             // Section 5: VSL Block
@@ -245,8 +256,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                         const viewsEl = card.querySelector('.reel-stats');
                         const placeholderEl = card.querySelector('.reel-video-placeholder');
                         if (viewsEl && lt[`reel${i}_views`]) viewsEl.textContent = `👁️ ${lt[`reel${i}_views`]} vistas`;
-                        if (placeholderEl && lt[`reel${i}_thumb`]) {
-                            placeholderEl.innerHTML = `<img src="${lt[`reel${i}_thumb`]}" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                        if (placeholderEl) {
+                            const thumbVal = lt[`reel${i}_thumb`];
+                            const isDefaultThumb = !thumbVal || thumbVal === "" || thumbVal.includes('ceo-alex.png');
+                            if (isDefaultThumb) {
+                                placeholderEl.innerHTML = '';
+                                placeholderEl.style.backgroundColor = '#18181b';
+                            } else {
+                                placeholderEl.innerHTML = `<img src="${thumbVal}" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            }
                         }
                     }
                 }
@@ -329,8 +347,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (pdfPromoDescEl && lt.pdf_promo_desc) pdfPromoDescEl.textContent = lt.pdf_promo_desc;
             
             const pdfMockupImg = document.querySelector('.pdf-mockup-img');
-            if (pdfMockupImg && lt.pdf_mockup_img) {
-                pdfMockupImg.src = lt.pdf_mockup_img;
+            if (pdfMockupImg) {
+                const isDefaultPdf = !lt.pdf_mockup_img || lt.pdf_mockup_img === "" || lt.pdf_mockup_img.includes('pdf-mockup.png');
+                const side = pdfMockupImg.closest('.pdf-mockup-side');
+                if (isDefaultPdf) {
+                    if (side) side.style.display = 'none';
+                    const container = pdfMockupImg.closest('.pdf-container');
+                    if (container) container.style.gridTemplateColumns = '1fr';
+                } else {
+                    if (side) side.style.display = '';
+                    const container = pdfMockupImg.closest('.pdf-container');
+                    if (container) container.style.gridTemplateColumns = '';
+                    pdfMockupImg.src = lt.pdf_mockup_img;
+                }
             }
 
             // Section 11: Otros Modelos Toyota tag/title/subtitle
@@ -365,9 +394,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     if (titleEl && lt[`gal${i}_title`]) titleEl.textContent = lt[`gal${i}_title`];
                     if (descEl && lt[`gal${i}_desc`]) descEl.textContent = lt[`gal${i}_desc`];
                     
-                    if (imgContainer && lt[`gal${i}_img`]) {
-                        imgContainer.innerHTML = `<img src="${lt[`gal${i}_img`]}" style="width:100%; height:100%; object-fit:cover; display:block;">`;
-                        imgContainer.style.padding = '0';
+                    const imageVal = lt[`gal${i}_img`];
+                    const isDefault = !imageVal || imageVal === "" || imageVal.includes('corolla-cross.png') || imageVal.includes('ceo-alex.png');
+                    if (isDefault) {
+                        proofCards[i - 1].style.display = 'none';
+                    } else {
+                        proofCards[i - 1].style.display = '';
+                        if (imgContainer) {
+                            imgContainer.innerHTML = `<img src="${imageVal}" style="width:100%; height:100%; object-fit:cover; display:block;">`;
+                            imgContainer.style.padding = '0';
+                        }
                     }
                 }
             }
@@ -403,7 +439,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // CEO Portrait updates
             const ceoProfileEl = document.querySelector('.ceo-profile-img');
-            if (ceoProfileEl) ceoProfileEl.src = lt.ceo_profile_img || 'assets/ceo-alex.png';
+            if (ceoProfileEl) {
+                const isDefaultCeo = !lt.ceo_profile_img || lt.ceo_profile_img === "" || lt.ceo_profile_img.includes('ceo-alex.png');
+                if (isDefaultCeo) {
+                    ceoProfileEl.style.display = 'none';
+                } else {
+                    ceoProfileEl.style.display = '';
+                    ceoProfileEl.src = lt.ceo_profile_img;
+                }
+            }
 
             // VSL Thumbnail / Video updates
             const vslVideoWrapper = document.getElementById('vsl-video-overlay-wrapper');
@@ -417,7 +461,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 } else {
                     const vslThumbnailEl = vslVideoWrapper.querySelector('.vsl-thumbnail');
-                    if (vslThumbnailEl) vslThumbnailEl.src = lt.vsl_thumbnail_img || 'assets/ceo-alex.png';
+                    if (vslThumbnailEl) {
+                        const isDefaultThumb = !lt.vsl_thumbnail_img || lt.vsl_thumbnail_img === "" || lt.vsl_thumbnail_img.includes('ceo-alex.png');
+                        if (isDefaultThumb) {
+                            vslThumbnailEl.style.display = 'none';
+                            const overlay = vslThumbnailEl.closest('.vsl-video-overlay');
+                            if (overlay) overlay.style.backgroundColor = '#18181b';
+                        } else {
+                            vslThumbnailEl.style.display = '';
+                            vslThumbnailEl.src = lt.vsl_thumbnail_img;
+                        }
+                    }
                 }
             }
 
@@ -504,7 +558,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Update primary vehicle image
                 const heroCarImg = document.querySelector('.hero-car-img');
-                if (heroCarImg) heroCarImg.src = primaryVehicle.image;
+                if (heroCarImg) {
+                    const isDefaultCar = !primaryVehicle.image || primaryVehicle.image === "" || primaryVehicle.image.includes('corolla-cross.png');
+                    if (isDefaultCar) {
+                        heroCarImg.style.display = 'none';
+                    } else {
+                        heroCarImg.style.display = '';
+                        heroCarImg.src = primaryVehicle.image;
+                    }
+                }
             }
 
             // 4. Render Otros Modelos (Excluyendo el principal)
