@@ -314,51 +314,30 @@ document.addEventListener('DOMContentLoaded', () => {
             await MLCDatabase.saveDraft(initialDB);
             currentDBState = JSON.parse(JSON.stringify(initialDB));
         } else {
-            // Load draft to continue editing
-            currentDBState = draftDB || liveDB;
+            // Load draft and deep merge with DEFAULT_DB to ensure any new keys/schemas (e.g. badges) are loaded
+            const mergedState = deepMerge(DEFAULT_DB, draftDB || liveDB);
+            
+            // Ensure each vehicle has all fields from DEFAULT_DB definition
+            if (mergedState.vehicles && Array.isArray(mergedState.vehicles)) {
+                mergedState.vehicles.forEach(v => {
+                    const defV = DEFAULT_DB.vehicles.find(item => item.id === v.id);
+                    if (defV) {
+                        Object.keys(defV).forEach(key => {
+                            if (v[key] === undefined) {
+                                v[key] = defV[key];
+                            }
+                        });
+                    } else {
+                        if (v.badge === undefined) v.badge = "";
+                        if (v.image === undefined) v.image = "";
+                    }
+                });
+            }
+            currentDBState = mergedState;
+
             // Check if draft differs from live to set status badge
             if (draftDB && liveDB && JSON.stringify(draftDB) !== JSON.stringify(liveDB)) {
                 setUnpublishedChanges(true);
-            }
-        }
-
-        // Migration: Ensure about_ig_screenshot exists
-        if (currentDBState.landing_texts && !currentDBState.landing_texts.about_ig_screenshot) {
-            currentDBState.landing_texts.about_ig_screenshot = "";
-        }
-
-        // Migration: Ensure hero_youtube_url exists (added in later version)
-        if (currentDBState.landing_texts && currentDBState.landing_texts.hero_youtube_url === undefined) {
-            currentDBState.landing_texts.hero_youtube_url = "";
-        }
-
-        // Migration: Ensure vsl_youtube_url exists
-        if (currentDBState.landing_texts && currentDBState.landing_texts.vsl_youtube_url === undefined) {
-            currentDBState.landing_texts.vsl_youtube_url = "";
-        }
-
-        // Migration: Ensure reel youtube URLs exist
-        if (currentDBState.landing_texts) {
-            for (let i = 1; i <= 4; i++) {
-                if (currentDBState.landing_texts[`reel${i}_youtube_url`] === undefined) {
-                    currentDBState.landing_texts[`reel${i}_youtube_url`] = "";
-                }
-            }
-        }
-
-        // Migration: Ensure new PDF config specs and gallery exist
-        if (currentDBState.pdf_config) {
-            const pc = currentDBState.pdf_config;
-            if (pc.spec_combustible === undefined) pc.spec_combustible = "Gasolina";
-            if (pc.spec_color_exterior === undefined) pc.spec_color_exterior = "Pearl White";
-            if (pc.spec_color_interior === undefined) pc.spec_color_interior = "Negro";
-            if (pc.spec_entrega === undefined) pc.spec_entrega = "Inmediata / Importación Directa";
-            if (pc.spec_idioma === undefined) pc.spec_idioma = "Español";
-            if (pc.spec_asientos === undefined) pc.spec_asientos = "Tela";
-            
-            for (let i = 1; i <= 6; i++) {
-                if (pc[`gallery_img_${i}`] === undefined) pc[`gallery_img_${i}`] = "";
-                if (pc[`gallery_cap_${i}`] === undefined) pc[`gallery_cap_${i}`] = "Detalle interior";
             }
         }
 
@@ -2491,4 +2470,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+function deepMerge(target, source) {
+    if (!source) return target;
+    if (!target) return source;
+    
+    const output = Object.assign({}, target);
+    if (isObject(target) && isObject(source)) {
+        Object.keys(source).forEach(key => {
+            if (isObject(source[key])) {
+                if (!(key in target)) {
+                    Object.assign(output, { [key]: source[key] });
+                } else {
+                    output[key] = deepMerge(target[key], source[key]);
+                }
+            } else {
+                Object.assign(output, { [key]: source[key] });
+            }
+        });
+    }
+    return output;
+}
+
+function isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+}
 

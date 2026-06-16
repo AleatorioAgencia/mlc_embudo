@@ -2119,3 +2119,12 @@ img {
     }
 }
 
+/* Prevenir parpadeo al cargar datos dinámicos del CMS */
+body.loading {
+    opacity: 0;
+}
+body {
+    opacity: 1;
+    transition: opacity 0.25s ease-in-out;
+}
+

@@ -69,33 +69,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     const reelNextBtn = document.getElementById('reel-next-btn');
     const reelsSliderContainer = document.getElementById('reels-slider-container');
 
+    // === SAFETY FALLBACK FOR REVEALING BODY ===
+    setTimeout(() => {
+        document.body.classList.remove('loading');
+    }, 1500);
+
     // === LOAD DYNAMIC CMS CONTENT ===
     let db = null;
     try {
         await MLCDatabase.init();
-        db = await MLCDatabase.getLive();
-        if (!db) {
-            // Try to initialize it from default_db.json first
-            let initialDB = null;
+        
+        // Fetch default_db.json in parallel with getLive to reduce loading time
+        const [liveDB, defaultDBResponse] = await Promise.all([
+            MLCDatabase.getLive().catch(() => null),
+            fetch('default_db.json').catch(() => null)
+        ]);
+
+        let defaultDB = null;
+        if (defaultDBResponse && defaultDBResponse.ok) {
             try {
-                const response = await fetch('default_db.json');
-                if (response.ok) {
-                    initialDB = await response.json();
-                    if (initialDB && initialDB.landing_texts && initialDB.page_settings) {
-                        console.log("[IndexedDB] Inicializando landing con default_db.json");
-                    } else {
-                        initialDB = null;
-                    }
-                }
-            } catch (err) {
-                console.info("[IndexedDB] No default_db.json found or failed to load.");
-            }
-            if (initialDB) {
-                await MLCDatabase.saveLive(initialDB);
-                await MLCDatabase.saveDraft(initialDB);
-                db = initialDB;
+                defaultDB = await defaultDBResponse.json();
+            } catch(e) {}
+        }
+
+        if (liveDB) {
+            // Deep merge to ensure all new keys/schemas (e.g. badges) are loaded
+            db = deepMerge(defaultDB || {}, liveDB);
+        } else {
+            db = defaultDB;
+            if (db) {
+                await MLCDatabase.saveLive(db);
+                await MLCDatabase.saveDraft(db);
             }
         }
+
         if (db) {
             if (db.page_settings && db.page_settings.whatsapp_phone) {
                 WHATSAPP_PHONE = db.page_settings.whatsapp_phone.replace(/\D/g, ''); // strip non-digits
@@ -112,6 +119,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             loadDynamicContent(db);
+            
+            // Reveal body smoothly once all dynamic texts and layout changes are applied
+            document.body.classList.remove('loading');
 
             // Debug panel info update
             const debugContent = document.getElementById('mlc-debug-content');
@@ -1174,3 +1184,28 @@ WhatsApp Oficial: +${WHATSAPP_PHONE}
         });
     }
 });
+
+function deepMerge(target, source) {
+    if (!source) return target;
+    if (!target) return source;
+    
+    const output = Object.assign({}, target);
+    if (isObject(target) && isObject(source)) {
+        Object.keys(source).forEach(key => {
+            if (isObject(source[key])) {
+                if (!(key in target)) {
+                    Object.assign(output, { [key]: source[key] });
+                } else {
+                    output[key] = deepMerge(target[key], source[key]);
+                }
+            } else {
+                Object.assign(output, { [key]: source[key] });
+            }
+        });
+    }
+    return output;
+}
+
+function isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+}
