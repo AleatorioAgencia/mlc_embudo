@@ -246,6 +246,24 @@
     "subtitle": "Catálogo de Importación Directa desde Origen (China)",
     "summary": "Este documento oficial referencial consolida las especificaciones y equipamiento detallado de la versión Elite Edition para exportación. Adquiere tu vehículo al precio base de origen asistido por el equipo de profesionales logísticos de MLC Master China.",
     "legal": "Este documento es de carácter estrictamente comercial e informativo. Las especificaciones finales del vehículo y las opciones de equipamiento están sujetas a variaciones del fabricante y a disponibilidad física al momento de formalizar la orden.",
-    "published_pdf_base64": ""
+    "published_pdf_base64": "",
+    "spec_combustible": "Gasolina",
+    "spec_color_exterior": "Pearl White",
+    "spec_color_interior": "Negro",
+    "spec_entrega": "Inmediata / Importación Directa",
+    "spec_idioma": "Español",
+    "spec_asientos": "Tela",
+    "gallery_img_1": "assets/corolla-cross.png",
+    "gallery_img_2": "assets/corolla-cross.png",
+    "gallery_img_3": "assets/corolla-cross.png",
+    "gallery_img_4": "assets/corolla-cross.png",
+    "gallery_img_5": "assets/corolla-cross.png",
+    "gallery_img_6": "assets/corolla-cross.png",
+    "gallery_cap_1": "Detalle interior",
+    "gallery_cap_2": "Detalle interior",
+    "gallery_cap_3": "Detalle interior",
+    "gallery_cap_4": "Detalle interior",
+    "gallery_cap_5": "Detalle interior",
+    "gallery_cap_6": "Detalle interior"
   }
 }

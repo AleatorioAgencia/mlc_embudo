@@ -136,6 +136,29 @@ const MLCDatabase = {
     },
 
     /**
+     * Gets captured leads from IndexedDB.
+     */
+    async getLeads() {
+        return await this.get('mlc_leads') || [];
+    },
+
+    /**
+     * Saves leads list to IndexedDB.
+     */
+    async saveLeads(leads) {
+        await this.set('mlc_leads', leads);
+    },
+
+    /**
+     * Appends a new lead to the IndexedDB leads list.
+     */
+    async addLead(lead) {
+        const leads = await this.getLeads();
+        leads.push(lead);
+        await this.saveLeads(leads);
+    },
+
+    /**
      * Checks if there's any data in localStorage and migrates it to IndexedDB.
      * Removes the keys from localStorage after successful migration to free up quota.
      */

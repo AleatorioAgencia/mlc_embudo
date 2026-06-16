@@ -227,7 +227,25 @@ document.addEventListener('DOMContentLoaded', () => {
             subtitle: "Catálogo de Importación Directa desde Origen (China)",
             summary: "Este documento oficial referencial consolida las especificaciones y equipamiento detallado de la versión Elite Edition para exportación. Adquiere tu vehículo al precio base de origen asistido por el equipo de profesionales logísticos de MLC Master China.",
             legal: "Este documento es de carácter estrictamente comercial e informativo. Las especificaciones finales del vehículo y las opciones de equipamiento están sujetas a variaciones del fabricante y a disponibilidad física al momento de formalizar la orden.",
-            published_pdf_base64: "" // Base64 data for public page download
+            published_pdf_base64: "", // Base64 data for public page download
+            spec_combustible: "Gasolina",
+            spec_color_exterior: "Pearl White",
+            spec_color_interior: "Negro",
+            spec_entrega: "Inmediata / Importación Directa",
+            spec_idioma: "Español",
+            spec_asientos: "Tela",
+            gallery_img_1: "assets/corolla-cross.png",
+            gallery_img_2: "assets/corolla-cross.png",
+            gallery_img_3: "assets/corolla-cross.png",
+            gallery_img_4: "assets/corolla-cross.png",
+            gallery_img_5: "assets/corolla-cross.png",
+            gallery_img_6: "assets/corolla-cross.png",
+            gallery_cap_1: "Detalle interior",
+            gallery_cap_2: "Detalle interior",
+            gallery_cap_3: "Detalle interior",
+            gallery_cap_4: "Detalle interior",
+            gallery_cap_5: "Detalle interior",
+            gallery_cap_6: "Detalle interior"
         }
     };
 
@@ -320,6 +338,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentDBState.landing_texts[`reel${i}_youtube_url`] === undefined) {
                     currentDBState.landing_texts[`reel${i}_youtube_url`] = "";
                 }
+            }
+        }
+
+        // Migration: Ensure new PDF config specs and gallery exist
+        if (currentDBState.pdf_config) {
+            const pc = currentDBState.pdf_config;
+            if (pc.spec_combustible === undefined) pc.spec_combustible = "Gasolina";
+            if (pc.spec_color_exterior === undefined) pc.spec_color_exterior = "Pearl White";
+            if (pc.spec_color_interior === undefined) pc.spec_color_interior = "Negro";
+            if (pc.spec_entrega === undefined) pc.spec_entrega = "Inmediata / Importación Directa";
+            if (pc.spec_idioma === undefined) pc.spec_idioma = "Español";
+            if (pc.spec_asientos === undefined) pc.spec_asientos = "Tela";
+            
+            for (let i = 1; i <= 6; i++) {
+                if (pc[`gallery_img_${i}`] === undefined) pc[`gallery_img_${i}`] = "assets/corolla-cross.png";
+                if (pc[`gallery_cap_${i}`] === undefined) pc[`gallery_cap_${i}`] = "Detalle interior";
             }
         }
 
@@ -520,6 +554,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 populatePdfForm();
                 updatePdfPreview();
             }
+            if (tabId === 'tab-leads') {
+                renderLeadsTable();
+            }
             if (tabId === 'tab-dashboard') loadDashboardData();
         });
     });
@@ -543,6 +580,101 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const hasPDF = currentDBState.pdf_config.published_pdf_base64 !== "" ? "Ficha Activa" : "Sin publicar";
         document.getElementById('dash-pdf-count').textContent = hasPDF;
+    }
+
+    // === LEADS MANAGEMENT & VISUALIZATION ===
+    async function renderLeadsTable() {
+        const body = document.getElementById('leads-table-body');
+        if (!body) return;
+        body.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Cargando leads...</td></tr>";
+        
+        let leads = [];
+        // 1. Try to load from server
+        try {
+            const res = await fetch('/api/get-leads');
+            if (res.ok) {
+                leads = await res.json();
+            }
+        } catch (err) {
+            console.warn("[Admin Leads] Servidor backend no responde o no disponible, intentando IndexedDB local:", err);
+        }
+        
+        // 2. Fetch and merge from IndexedDB
+        try {
+            const localLeads = await MLCDatabase.getLeads();
+            // If local leads are more up to date, use them
+            if (localLeads && localLeads.length > leads.length) {
+                leads = localLeads;
+            }
+        } catch (err) {
+            console.error("[Admin Leads] Error al cargar leads desde IndexedDB:", err);
+        }
+        
+        if (leads.length === 0) {
+            body.innerHTML = "<tr><td colspan='5' style='text-align:center;color:var(--text-muted);padding:20px 0;'>No se han capturado leads aún.</td></tr>";
+            return;
+        }
+        
+        // Sort by timestamp descending
+        leads.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        body.innerHTML = "";
+        leads.forEach(lead => {
+            const tr = document.createElement('tr');
+            const dateStr = new Date(lead.timestamp).toLocaleString('es-ES');
+            tr.innerHTML = `
+                <td>${dateStr}</td>
+                <td><strong>${lead.name}</strong></td>
+                <td><a href="mailto:${lead.email}" style="color:var(--gold);text-decoration:underline;">${lead.email}</a></td>
+                <td>${lead.whatsapp !== "No provisto" ? `<a href="https://api.whatsapp.com/send?phone=${lead.whatsapp.replace(/\D/g,'')}" target="_blank" style="color:var(--text-light);display:flex;align-items:center;gap:4px;">🟢 ${lead.whatsapp}</a>` : `<span style="color:var(--text-muted);">${lead.whatsapp}</span>`}</td>
+                <td><span class="db-status-badge status-published" style="font-size:0.75rem;padding:2px 8px;background:rgba(177,151,107,0.15);color:var(--gold);border-color:var(--gold);">${lead.vehicle}</span></td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+
+    // CSV Export trigger
+    const btnExportLeads = document.getElementById('btn-export-leads-csv');
+    if (btnExportLeads) {
+        btnExportLeads.addEventListener('click', async () => {
+            let leads = [];
+            try {
+                const res = await fetch('/api/get-leads');
+                if (res.ok) leads = await res.json();
+            } catch (e) {}
+            try {
+                const localLeads = await MLCDatabase.getLeads();
+                if (localLeads && localLeads.length > leads.length) leads = localLeads;
+            } catch (e) {}
+            
+            if (leads.length === 0) {
+                alert("No hay leads registrados para exportar.");
+                return;
+            }
+            
+            leads.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // CSV construction with BOM for Excel UTF-8
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+            csvContent += "Fecha/Hora,Nombre Completo,Correo Electrónico,WhatsApp,Vehículo de Interés\n";
+            
+            leads.forEach(l => {
+                const dateStr = new Date(l.timestamp).toLocaleString('es-ES');
+                const name = `"${l.name.replace(/"/g, '""')}"`;
+                const email = `"${l.email.replace(/"/g, '""')}"`;
+                const whatsapp = `"${l.whatsapp.replace(/"/g, '""')}"`;
+                const vehicle = `"${l.vehicle.replace(/"/g, '""')}"`;
+                csvContent += `${dateStr},${name},${email},${whatsapp},${vehicle}\n`;
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", encodedUri);
+            downloadAnchor.setAttribute("download", `MLC_Prospectos_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        });
     }
 
     // === LOAD FORMS DATA ===
@@ -1034,11 +1166,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const pConfig = currentDBState.pdf_config;
         pdfSelectVehicle.value = pConfig.selected_vehicle_id;
-        document.getElementById('pdf-header-title').value = pConfig.title;
-        document.getElementById('pdf-header-subtitle').value = pConfig.subtitle;
-        document.getElementById('pdf-summary').value = pConfig.summary;
-        document.getElementById('pdf-legal').value = pConfig.legal;
+        document.getElementById('pdf-header-title').value = pConfig.title || "";
+        document.getElementById('pdf-header-subtitle').value = pConfig.subtitle || "";
+        document.getElementById('pdf-summary').value = pConfig.summary || "";
+        document.getElementById('pdf-legal').value = pConfig.legal || "";
+
+        // Populate new spec inputs
+        document.getElementById('pdf-spec-combustible').value = pConfig.spec_combustible || "Gasolina";
+        document.getElementById('pdf-spec-color-exterior').value = pConfig.spec_color_exterior || "Pearl White";
+        document.getElementById('pdf-spec-color-interior').value = pConfig.spec_color_interior || "Negro";
+        document.getElementById('pdf-spec-entrega').value = pConfig.spec_entrega || "Inmediata / Importación Directa";
+        document.getElementById('pdf-spec-idioma').value = pConfig.spec_idioma || "Español";
+        document.getElementById('pdf-spec-asientos').value = pConfig.spec_asientos || "Tela";
+
+        // Populate gallery previews and captions
+        for (let i = 1; i <= 6; i++) {
+            const imgPath = pConfig[`gallery_img_${i}`] || "assets/corolla-cross.png";
+            document.getElementById(`pdf-gal-img-${i}-path`).value = imgPath;
+            document.getElementById(`pdf-gal-img-${i}-prev`).src = imgPath;
+            document.getElementById(`pdf-gal-cap-${i}`).value = pConfig[`gallery_cap_${i}`] || "Detalle interior";
+        }
     }
+
+    // Set up file change listeners for PDF gallery image uploaders
+    function setupPdfGalleryInputs() {
+        for (let i = 1; i <= 6; i++) {
+            const fileInput = document.getElementById(`pdf-gal-img-${i}-file`);
+            if (!fileInput) continue;
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                if (file.size > 4.5 * 1024 * 1024) {
+                    alert("⚠️ El archivo es demasiado grande. Por favor, sube una imagen inferior a 4.5MB.");
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const base64Data = event.target.result;
+                    document.getElementById(`pdf-gal-img-${i}-prev`).src = base64Data;
+                    document.getElementById(`pdf-gal-img-${i}-path`).value = base64Data;
+                    // Auto-save in temporary state
+                    currentDBState.pdf_config[`gallery_img_${i}`] = base64Data;
+                    saveDraftToStore();
+                    logActivity(`Imagen ${i} de galería subida al PDF.`);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    setupPdfGalleryInputs();
 
     function updatePdfPreview() {
         const vehicleId = pdfSelectVehicle.value;
@@ -1065,7 +1244,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Realtime update triggers on config inputs
         ['pdf-header-title', 'pdf-header-subtitle', 'pdf-summary'].forEach(id => {
-            document.getElementById(id).addEventListener('input', updatePdfPreview);
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('input', updatePdfPreview);
         });
     }
 
@@ -1079,6 +1259,20 @@ document.addEventListener('DOMContentLoaded', () => {
             pConfig.legal = document.getElementById('pdf-legal').value;
             pConfig.selected_vehicle_id = pdfSelectVehicle.value;
 
+            // Sync new spec fields
+            pConfig.spec_combustible = document.getElementById('pdf-spec-combustible').value;
+            pConfig.spec_color_exterior = document.getElementById('pdf-spec-color-exterior').value;
+            pConfig.spec_color_interior = document.getElementById('pdf-spec-color-interior').value;
+            pConfig.spec_entrega = document.getElementById('pdf-spec-entrega').value;
+            pConfig.spec_idioma = document.getElementById('pdf-spec-idioma').value;
+            pConfig.spec_asientos = document.getElementById('pdf-spec-asientos').value;
+
+            // Sync gallery values
+            for (let i = 1; i <= 6; i++) {
+                pConfig[`gallery_img_${i}`] = document.getElementById(`pdf-gal-img-${i}-path`).value;
+                pConfig[`gallery_cap_${i}`] = document.getElementById(`pdf-gal-cap-${i}`).value;
+            }
+
             saveDraftToStore();
             logActivity("Configuración del PDF guardada localmente.");
             alert("Configuración de la ficha guardada. Puedes generar el PDF interactivo presionando el botón 'Generar & Publicar PDF Dinámico'.");
@@ -1086,9 +1280,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Dynamic jsPDF Compiler Trigger
+    // Image loading helper for base64 conversion
+    function loadImgBase64(url) {
+        return new Promise((resolve) => {
+            if (!url) {
+                resolve("");
+                return;
+            }
+            if (url.startsWith("data:")) {
+                resolve(url);
+                return;
+            }
+            
+            fetch(url)
+                .then(res => res.blob())
+                .then(blob => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = () => resolve("");
+                    reader.readAsDataURL(blob);
+                })
+                .catch(err => {
+                    console.error("Error fetching image for PDF:", url, err);
+                    resolve(""); // fallback to blank/no image
+                });
+        });
+    }
+
+    // Dynamic jsPDF Compiler Trigger
     const btnGeneratePdf = document.getElementById('btn-generate-pdf-trigger');
     if (btnGeneratePdf) {
-        btnGeneratePdf.addEventListener('click', () => {
+        btnGeneratePdf.addEventListener('click', async () => {
             const vehicleId = pdfSelectVehicle.value;
             const v = currentDBState.vehicles.find(item => item.id === vehicleId);
             
@@ -1097,144 +1319,395 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Change button state to loading
+            const originalBtnText = btnGeneratePdf.innerHTML;
+            btnGeneratePdf.disabled = true;
+            btnGeneratePdf.innerHTML = "<span>Compilando PDF e Imágenes... ⏳</span>";
+
             const titleVal = document.getElementById('pdf-header-title').value;
             const subtitleVal = document.getElementById('pdf-header-subtitle').value;
             const summaryVal = document.getElementById('pdf-summary').value;
             const legalVal = document.getElementById('pdf-legal').value;
+            const pConfig = currentDBState.pdf_config;
 
-            // Initialize jsPDF (Standard global UMD import)
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: "portrait",
-                unit: "mm",
-                format: "a4"
-            });
+            try {
+                // Load base64 for all images
+                const logoBase64 = await loadImgBase64(currentDBState.landing_texts.brand_logo || "assets/logo.jpg");
+                const mainImgBase64 = await loadImgBase64(v.image);
+                
+                const gal1 = await loadImgBase64(pConfig.gallery_img_1);
+                const gal2 = await loadImgBase64(pConfig.gallery_img_2);
+                const gal3 = await loadImgBase64(pConfig.gallery_img_3);
+                const gal4 = await loadImgBase64(pConfig.gallery_img_4);
+                const gal5 = await loadImgBase64(pConfig.gallery_img_5);
+                const gal6 = await loadImgBase64(pConfig.gallery_img_6);
 
-            // --- PAGE BUILDER LOGIC (PREMIUM CORPORATE LAYOUT) ---
+                // Initialize jsPDF (Standard global UMD import)
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: "portrait",
+                    unit: "mm",
+                    format: "a4"
+                });
 
-            // Colors
-            const colorRed = [185, 28, 28]; // Primary red
-            const colorGold = [177, 151, 107]; // Gold accent
-            const colorDark = [15, 23, 42]; // Dark slate text
-            const colorGray = [100, 116, 139]; // Muted text
+                // Colors
+                const colorRed = [185, 28, 28]; // Primary red
+                const colorGold = [177, 151, 107]; // Gold accent
+                const colorDark = [15, 23, 42]; // Dark slate text
+                const colorGray = [100, 116, 139]; // Muted text
 
-            // Border Header Line (Gold)
-            doc.setDrawColor(colorGold[0], colorGold[1], colorGold[2]);
-            doc.setLineWidth(1.5);
-            doc.line(15, 15, 195, 15);
+                // ================= PÁGINA 1 =================
+                // Gold Header Accent Line
+                doc.setDrawColor(colorGold[0], colorGold[1], colorGold[2]);
+                doc.setLineWidth(1.5);
+                doc.line(15, 15, 195, 15);
 
-            // Brand Logo placeholder text
-            doc.setFont("Outfit", "bold");
-            doc.setFontSize(16);
-            doc.setTextColor(colorRed[0], colorRed[1], colorRed[2]);
-            doc.text("MLC MASTER CHINA", 15, 25);
-            
-            doc.setFontSize(8);
-            doc.setTextColor(colorGray[0], colorGray[1], colorGray[2]);
-            doc.text("IMPORTACIÓN ASISTIDA PREMIUM DESDE ORIGEN", 15, 29);
-
-            // Title
-            doc.setFontSize(15);
-            doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
-            const splitTitle = doc.splitTextToSize(titleVal, 180);
-            doc.text(splitTitle, 15, 40);
-
-            // Subtitle
-            doc.setFontSize(10);
-            doc.setFont("Inter", "normal");
-            doc.setTextColor(colorGold[0], colorGold[1], colorGold[2]);
-            doc.text(subtitleVal, 15, 52);
-
-            // Separator
-            doc.setDrawColor(226, 232, 240);
-            doc.setLineWidth(0.5);
-            doc.line(15, 56, 195, 56);
-
-            // Resumen comercial
-            doc.setFontSize(9.5);
-            doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
-            const splitSummary = doc.splitTextToSize(summaryVal, 180);
-            doc.text(splitSummary, 15, 63);
-
-            // Table of Specifications Header
-            doc.setFillColor(248, 250, 252);
-            doc.rect(15, 78, 180, 8, "F");
-            
-            doc.setFont("Outfit", "bold");
-            doc.setFontSize(10);
-            doc.setTextColor(colorRed[0], colorRed[1], colorRed[2]);
-            doc.text("FICHA DE ESPECIFICACIONES TÉCNICAS", 20, 83);
-
-            // Specs Table Rows
-            const specsTable = [
-                { label: "Modelo Comercial:", val: v.name },
-                { label: "Precio FOB Base (China):", val: `desde USD ${v.price}` },
-                { label: "Motorización:", val: v.motor },
-                { label: "Transmisión / Marchas:", val: v.transmision },
-                { label: "Dimensiones generales:", val: v.dimensiones },
-                { label: "Seguridad Activa / Pasiva:", val: v.seguridad },
-                { label: "Tecnología / Confort:", val: v.tecnologia },
-                { label: "Observaciones de Compra:", val: v.observaciones }
-            ];
-
-            let startY = 93;
-            doc.setFont("Inter", "normal");
-            doc.setFontSize(9);
-
-            specsTable.forEach(row => {
-                // Key column
-                doc.setFont("Inter", "bold");
+                // Logo
+                if (logoBase64) {
+                    try {
+                        doc.addImage(logoBase64, 'JPEG', 15, 18, 15, 15);
+                    } catch (e) {
+                        console.warn("Could not draw logo image in PDF:", e);
+                    }
+                }
+                
+                // Brand Text next to Logo
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(14);
+                doc.setTextColor(colorRed[0], colorRed[1], colorRed[2]);
+                doc.text("MLC MASTER CHINA", 34, 24);
+                
+                doc.setFontSize(7.5);
                 doc.setTextColor(colorGray[0], colorGray[1], colorGray[2]);
-                doc.text(row.label, 15, startY);
+                doc.text("IMPORTACIÓN ASISTIDA PREMIUM DESDE ORIGEN", 34, 28);
 
-                // Value column (multiline handling)
-                doc.setFont("Inter", "normal");
+                // Category Badge (Red capsule) on top right
+                doc.setFillColor(colorRed[0], colorRed[1], colorRed[2]);
+                doc.rect(130, 19, 65, 6, "F");
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(6.5);
+                doc.setTextColor(255, 255, 255);
+                doc.text("MASTER CHINA MLC | CATALOGO PREMIUM", 162.5, 23.2, { align: "center" });
+
+                // Main Title
+                doc.setFontSize(20);
                 doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
-                const splitVal = doc.splitTextToSize(row.val, 120);
-                doc.text(splitVal, 65, startY);
+                doc.setFont("Helvetica", "bold");
+                const splitTitle = doc.splitTextToSize(titleVal.toUpperCase(), 180);
+                doc.text(splitTitle, 15, 42);
+
+                // Subtitle
+                doc.setFontSize(10);
+                doc.setTextColor(colorGold[0], colorGold[1], colorGold[2]);
+                doc.setFont("Helvetica", "normal");
+                doc.text(subtitleVal, 15, 49);
+
+                // Left Column (Main Image, Price Badge, CTA Button)
+                if (mainImgBase64) {
+                    try {
+                        doc.addImage(mainImgBase64, 'JPEG', 15, 54, 85, 55);
+                    } catch (e) {
+                        console.warn("Could not draw main vehicle image in PDF:", e);
+                        doc.setDrawColor(200, 200, 200);
+                        doc.rect(15, 54, 85, 55);
+                        doc.text("Image Placeholder", 40, 80);
+                    }
+                } else {
+                    doc.setDrawColor(200, 200, 200);
+                    doc.rect(15, 54, 85, 55);
+                    doc.text("Image Placeholder", 40, 80);
+                }
+
+                // Under image note
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(6.5);
+                doc.setTextColor(colorGray[0], colorGray[1], colorGray[2]);
+                doc.text("Vista exterior en estudio. Diseño deportivo y aerodinámico optimizado.", 15, 113);
+
+                // Price Badge
+                doc.setFillColor(colorDark[0], colorDark[1], colorDark[2]);
+                doc.rect(15, 117, 85, 18, "F");
+                
+                doc.setFontSize(7);
+                doc.setTextColor(colorGold[0], colorGold[1], colorGold[2]);
+                doc.setFont("Helvetica", "bold");
+                doc.text("PRECIO FOB REFERENCIAL", 20, 122);
+                
+                doc.setFontSize(13);
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("Helvetica", "bold");
+                doc.text(`USD ${v.price}`, 20, 131);
+
+                // Red Simulated button "COTIZAR VEHÍCULO"
+                doc.setFillColor(colorRed[0], colorRed[1], colorRed[2]);
+                doc.rect(15, 140, 85, 9, "F");
+                
+                doc.setFontSize(8);
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("Helvetica", "bold");
+                doc.text("COTIZAR VEHÍCULO 💬", 57.5, 146, { align: "center" });
+
+                // Right Column (Specifications Table)
+                doc.setFontSize(9);
+                doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
+                doc.setFont("Helvetica", "bold");
+                doc.text("ESPECIFICACIONES TÉCNICAS", 110, 58);
+
+                const specsTable = [
+                    { label: "Modelo Comercial:", val: v.name },
+                    { label: "Motorización:", val: v.motor },
+                    { label: "Transmisión:", val: v.transmision },
+                    { label: "Dimensiones:", val: v.dimensiones },
+                    { label: "Combustible:", val: pConfig.spec_combustible },
+                    { label: "Color Exterior:", val: pConfig.spec_color_exterior },
+                    { label: "Color Interior:", val: pConfig.spec_color_interior },
+                    { label: "Entrega / Plazo:", val: pConfig.spec_entrega },
+                    { label: "Asientos:", val: pConfig.spec_asientos }
+                ];
+
+                let specY = 62;
+                specsTable.forEach((row, index) => {
+                    // Alternate background tint
+                    if (index % 2 === 0) {
+                        doc.setFillColor(248, 250, 252);
+                        doc.rect(110, specY, 85, 10, "F");
+                    }
+                    
+                    // Fine bottom line
+                    doc.setDrawColor(226, 232, 240);
+                    doc.setLineWidth(0.2);
+                    doc.line(110, specY + 10, 195, specY + 10);
+
+                    // Label
+                    doc.setFont("Helvetica", "bold");
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(colorGray[0], colorGray[1], colorGray[2]);
+                    doc.text(row.label, 113, specY + 6.5);
+
+                    // Value
+                    doc.setFont("Helvetica", "normal");
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
+                    const splitVal = doc.splitTextToSize(row.val, 46);
+                    doc.text(splitVal, 146, specY + 6.5);
+
+                    specY += 10;
+                });
 
                 // Separator line
-                doc.setDrawColor(241, 245, 249);
-                doc.line(15, startY + 6, 195, startY + 6);
+                doc.setDrawColor(226, 232, 240);
+                doc.setLineWidth(0.3);
+                doc.line(15, 157, 195, 157);
+
+                // Resumen comercial / Introducción
+                doc.setFontSize(9);
+                doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
+                doc.setFont("Helvetica", "normal");
+                const splitSummary = doc.splitTextToSize(summaryVal, 180);
+                doc.text(splitSummary, 15, 163);
+
+                // Acompañamiento box
+                doc.setFillColor(248, 250, 252);
+                doc.rect(15, 178, 180, 26, "F");
+                doc.setDrawColor(226, 232, 240);
+                doc.rect(15, 178, 180, 26, "D");
                 
-                startY += 12;
-            });
+                doc.setFontSize(8.5);
+                doc.setTextColor(colorRed[0], colorRed[1], colorRed[2]);
+                doc.setFont("Helvetica", "bold");
+                doc.text("ACOMPAÑAMIENTO LOGÍSTICO Y REVISIÓN EN ORIGEN", 20, 184);
+                
+                doc.setFontSize(7.5);
+                doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
+                doc.setFont("Helvetica", "normal");
+                doc.text("• Compra directa al canal mayorista oficial de exportación en China sin intermediarios.", 20, 189);
+                doc.text("• Reporte fotográfico y de video del chasis y motor antes de sellar el contenedor.", 20, 194);
+                doc.text("• Gestión documental completa (B/L, Factura y Packing List) en español para aduana.", 20, 199);
 
-            // Contact CTA Box
-            doc.setFillColor(240, 253, 244); // Light WhatsApp green background
-            doc.rect(15, startY + 5, 180, 20, "F");
-            doc.setDrawColor(37, 211, 102);
-            doc.setLineWidth(0.3);
-            doc.rect(15, startY + 5, 180, 20, "D");
+                // Contact CTA Box (WhatsApp green tint)
+                doc.setFillColor(240, 253, 244);
+                doc.rect(15, 209, 180, 20, "F");
+                doc.setDrawColor(37, 211, 102);
+                doc.setLineWidth(0.3);
+                doc.rect(15, 209, 180, 20, "D");
 
-            doc.setFont("Outfit", "bold");
-            doc.setFontSize(11);
-            doc.setTextColor(21, 128, 61);
-            doc.text("SOLICITAR COTIZACIÓN FORMAL DE IMPORTACIÓN", 20, startY + 12);
-            
-            doc.setFont("Inter", "normal");
-            doc.setFontSize(8.5);
-            doc.setTextColor(21, 128, 61);
-            doc.text(`Canal de WhatsApp Oficial de MLC: +${currentDBState.page_settings.whatsapp_phone} (Asesoría en español)`, 20, startY + 17);
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(9.5);
+                doc.setTextColor(21, 128, 61);
+                doc.text("SOLICITAR COTIZACIÓN FORMAL DE IMPORTACIÓN DIRECTA", 20, 216);
+                
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(8);
+                doc.setTextColor(21, 128, 61);
+                doc.text(`Canal de WhatsApp Oficial de MLC: +${currentDBState.page_settings.whatsapp_phone} (Asesoría comercial en español)`, 20, 222);
 
-            // Legal footer
-            doc.setFontSize(7.5);
-            doc.setTextColor(colorGray[0], colorGray[1], colorGray[2]);
-            const splitLegal = doc.splitTextToSize(legalVal, 180);
-            doc.text(splitLegal, 15, startY + 32);
+                // Legal Disclaimer
+                doc.setFontSize(7);
+                doc.setTextColor(colorGray[0], colorGray[1], colorGray[2]);
+                const splitLegal = doc.splitTextToSize(legalVal, 180);
+                doc.text(splitLegal, 15, 236);
 
-            // Output to base64 Data URI string to save in our DB
-            const pdfBase64Data = doc.output('datauristring');
-            
-            // Save inside pdf_config database state
-            currentDBState.pdf_config.published_pdf_base64 = pdfBase64Data;
-            
-            saveDraftToStore();
-            logActivity("PDF Dinámico generado y guardado en borrador.");
-            
-            // Also trigger standard client download instantly
-            doc.save(`Ficha_Tecnica_MLC_${v.name.replace(/ /g, "_")}.pdf`);
-            alert("🎉 ¡Ficha Técnica en PDF Generada con éxito! Se ha descargado localmente y guardado en tu base de datos para descarga de los clientes.");
+                // Page 1 Footer
+                doc.setDrawColor(226, 232, 240);
+                doc.setLineWidth(0.3);
+                doc.line(15, 276, 195, 276);
+                
+                doc.setFontSize(7.5);
+                doc.setTextColor(colorGray[0], colorGray[1], colorGray[2]);
+                doc.text("MASTER CHINA MLC | DETALLES DE IMPORTACIÓN", 15, 281);
+                doc.text("PÁGINA 01 / 02", 195, 281, { align: "right" });
+
+
+                // ================= PÁGINA 2 =================
+                doc.addPage();
+
+                // Gold Header Accent Line
+                doc.setDrawColor(colorGold[0], colorGold[1], colorGold[2]);
+                doc.setLineWidth(1.5);
+                doc.line(15, 15, 195, 15);
+
+                // Category Subtitle
+                doc.setFontSize(7.5);
+                doc.setTextColor(colorGold[0], colorGold[1], colorGold[2]);
+                doc.setFont("Helvetica", "bold");
+                doc.text("MASTER CHINA MLC | TECNOLOGÍA & CONFORT INTERIOR", 15, 22);
+
+                // Main Title Page 2
+                doc.setFontSize(12);
+                doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
+                doc.setFont("Helvetica", "bold");
+                doc.text("EXPERIENCIA DE CONDUCCIÓN DIGITAL & CONFORT PREMIUM", 15, 29);
+
+                // Separator Line
+                doc.setDrawColor(226, 232, 240);
+                doc.setLineWidth(0.5);
+                doc.line(15, 33, 195, 33);
+
+                // 3x2 Images Grid Coordinates
+                const imgW = 54;
+                const imgH = 40;
+                
+                const gridData = [
+                    { base64: gal1, cap: pConfig.gallery_cap_1 || "Detalle interior", x: 15, y: 38 },
+                    { base64: gal2, cap: pConfig.gallery_cap_2 || "Detalle interior", x: 78, y: 38 },
+                    { base64: gal3, cap: pConfig.gallery_cap_3 || "Detalle interior", x: 141, y: 38 },
+                    { base64: gal4, cap: pConfig.gallery_cap_4 || "Detalle interior", x: 15, y: 92 },
+                    { base64: gal5, cap: pConfig.gallery_cap_5 || "Detalle interior", x: 78, y: 92 },
+                    { base64: gal6, cap: pConfig.gallery_cap_6 || "Detalle interior", x: 141, y: 92 }
+                ];
+
+                gridData.forEach((item) => {
+                    if (item.base64) {
+                        try {
+                            doc.addImage(item.base64, 'JPEG', item.x, item.y, imgW, imgH);
+                        } catch (e) {
+                            console.warn("Could not draw gallery image:", e);
+                            doc.setDrawColor(200, 200, 200);
+                            doc.rect(item.x, item.y, imgW, imgH);
+                        }
+                    } else {
+                        doc.setDrawColor(200, 200, 200);
+                        doc.rect(item.x, item.y, imgW, imgH);
+                    }
+                    
+                    // Draw Caption centered below image
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
+                    doc.setFont("Helvetica", "normal");
+                    doc.text(item.cap, item.x + (imgW / 2), item.y + imgH + 5, { align: "center" });
+                });
+
+                // Logistics Flow Chart Card (Page 2 bottom half)
+                doc.setFillColor(248, 250, 252);
+                doc.rect(15, 150, 180, 115, "F");
+                doc.setDrawColor(226, 232, 240);
+                doc.rect(15, 150, 180, 115, "D");
+
+                doc.setFontSize(9.5);
+                doc.setTextColor(colorRed[0], colorRed[1], colorRed[2]);
+                doc.setFont("Helvetica", "bold");
+                doc.text("FASE OPERATIVA - GESTIÓN Y CONTROL DE CALIDAD", 20, 157);
+
+                const steps = [
+                    {
+                        num: "1",
+                        title: "Adquisición y Tránsito Interno",
+                        desc: "Compra directa al canal mayorista oficial de exportación en China y traslado inmediato a nuestros almacenes de consolidación en Guangzhou."
+                    },
+                    {
+                        num: "2",
+                        title: "Escrutinio Físico y Verificación",
+                        desc: "Validación técnica de chasis, motor, componentes electrónicos, soldaduras estructurales y cableado interno antes del despacho."
+                    },
+                    {
+                        num: "3",
+                        title: "Consolidación y Trincado en Contenedor",
+                        desc: "Anclaje del coche mediante cinchas de trincado industrial en almacén logístico de Yiwu para garantizar cero movimientos en el mar."
+                    },
+                    {
+                        num: "4",
+                        title: "Facturación y Liberación de B/L",
+                        desc: "Gestión documental de aduanas de salida en China y emisión del Bill of Lading (B/L) oficial indispensable para nacionalizar en destino."
+                    }
+                ];
+
+                let stepY = 166;
+                steps.forEach((s) => {
+                    // Draw Red Circle Number
+                    doc.setFillColor(colorRed[0], colorRed[1], colorRed[2]);
+                    doc.circle(23, stepY + 1.5, 2.5, "F");
+                    
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFont("Helvetica", "bold");
+                    doc.text(s.num, 23, stepY + 2.3, { align: "center" });
+
+                    // Step Title
+                    doc.setFontSize(8.5);
+                    doc.setTextColor(colorDark[0], colorDark[1], colorDark[2]);
+                    doc.setFont("Helvetica", "bold");
+                    doc.text(s.title, 28, stepY + 2.0);
+
+                    // Step Desc
+                    doc.setFontSize(7.5);
+                    doc.setTextColor(colorGray[0], colorGray[1], colorGray[2]);
+                    doc.setFont("Helvetica", "normal");
+                    const splitDesc = doc.splitTextToSize(s.desc, 160);
+                    doc.text(splitDesc, 28, stepY + 6.5);
+
+                    stepY += 21;
+                });
+
+                // Page 2 Footer
+                doc.setDrawColor(226, 232, 240);
+                doc.setLineWidth(0.3);
+                doc.line(15, 276, 195, 276);
+                
+                doc.setFontSize(7.5);
+                doc.setTextColor(colorGray[0], colorGray[1], colorGray[2]);
+                doc.text("MASTER CHINA MLC | DETALLES DE INTERIOR Y TECNOLOGÍA", 15, 281);
+                doc.text("PÁGINA 02 / 02", 195, 281, { align: "right" });
+
+                // Output to base64 Data URI string to save in our DB
+                const pdfBase64Data = doc.output('datauristring');
+                
+                // Save inside pdf_config database state
+                currentDBState.pdf_config.published_pdf_base64 = pdfBase64Data;
+                
+                saveDraftToStore();
+                logActivity("PDF Dinámico generado y guardado en borrador.");
+                
+                // Also trigger standard client download instantly
+                doc.save(`Ficha_Tecnica_MLC_${v.name.replace(/ /g, "_")}.pdf`);
+                alert("🎉 ¡Ficha Técnica en PDF Generada con éxito! Se ha descargado localmente y guardado en tu base de datos para descarga de los clientes.");
+            } catch (err) {
+                console.error("Error al generar PDF:", err);
+                alert("❌ Ocurrió un error al compilar el PDF: " + err.message);
+            } finally {
+                // Restore button state
+                btnGeneratePdf.disabled = false;
+                btnGeneratePdf.innerHTML = originalBtnText;
+            }
         });
     }
 

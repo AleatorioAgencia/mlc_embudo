@@ -92,6 +92,10 @@
                     <span class="nav-icon">📄</span>
                     <span>Módulo PDF Dinámico</span>
                 </a>
+                <a href="#" class="nav-item" data-tab="tab-leads">
+                    <span class="nav-icon">👥</span>
+                    <span>Leads / Prospectos</span>
+                </a>
                 <a href="#" class="nav-item" data-tab="tab-media">
                     <span class="nav-icon">📸</span>
                     <span>Biblioteca Medios</span>
@@ -1566,6 +1570,122 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- ESPECIFICACIONES ADICIONALES PARA PDF (PÁGINA 1) -->
+                                <div class="form-section-card" style="margin-top: 15px;">
+                                    <h3>Especificaciones Adicionales (Tabla Página 1)</h3>
+                                    <p class="section-desc">Personaliza los campos complementarios que aparecerán en la tabla técnica de la página 1.</p>
+                                    
+                                    <div class="form-row-3">
+                                        <div class="form-group-col">
+                                            <label for="pdf-spec-combustible">Combustible</label>
+                                            <input type="text" id="pdf-spec-combustible" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="pdf-spec-color-exterior">Color Exterior</label>
+                                            <input type="text" id="pdf-spec-color-exterior" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="pdf-spec-color-interior">Color Interior</label>
+                                            <input type="text" id="pdf-spec-color-interior" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-row-3" style="margin-top: 10px;">
+                                        <div class="form-group-col">
+                                            <label for="pdf-spec-entrega">Entrega / Plazo</label>
+                                            <input type="text" id="pdf-spec-entrega" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="pdf-spec-idioma">Idioma de Interfaz</label>
+                                            <input type="text" id="pdf-spec-idioma" class="form-control" required>
+                                        </div>
+                                        <div class="form-group-col">
+                                            <label for="pdf-spec-asientos">Tipo de Asientos</label>
+                                            <input type="text" id="pdf-spec-asientos" class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- GALERÍA DE IMÁGENES PARA PDF (PÁGINA 2) -->
+                                <div class="form-section-card" style="margin-top: 15px;">
+                                    <h3>Galería de Imágenes (Cuadrícula Página 2)</h3>
+                                    <p class="section-desc">Sube hasta 6 imágenes en base64 con sus respectivos pies de foto que aparecerán en la cuadrícula de la segunda página.</p>
+                                    
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 10px;">
+                                        <!-- Image 1 -->
+                                        <div style="border: 1px solid var(--border-admin); padding: 10px; border-radius: 6px;">
+                                            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Imagen 1</label>
+                                            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                                                <img src="" id="pdf-gal-img-1-prev" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-admin);">
+                                                <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="pdf-gal-img-1-file" style="padding: 4px 8px; font-size: 0.75rem;">Subir 📤</button>
+                                                <input type="file" id="pdf-gal-img-1-file" style="display: none;" accept="image/*">
+                                                <input type="hidden" id="pdf-gal-img-1-path">
+                                            </div>
+                                            <input type="text" id="pdf-gal-cap-1" class="form-control" placeholder="Pie de foto" style="font-size: 0.8rem; height: auto; padding: 4px 8px;" required>
+                                        </div>
+
+                                        <!-- Image 2 -->
+                                        <div style="border: 1px solid var(--border-admin); padding: 10px; border-radius: 6px;">
+                                            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Imagen 2</label>
+                                            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                                                <img src="" id="pdf-gal-img-2-prev" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-admin);">
+                                                <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="pdf-gal-img-2-file" style="padding: 4px 8px; font-size: 0.75rem;">Subir 📤</button>
+                                                <input type="file" id="pdf-gal-img-2-file" style="display: none;" accept="image/*">
+                                                <input type="hidden" id="pdf-gal-img-2-path">
+                                            </div>
+                                            <input type="text" id="pdf-gal-cap-2" class="form-control" placeholder="Pie de foto" style="font-size: 0.8rem; height: auto; padding: 4px 8px;" required>
+                                        </div>
+
+                                        <!-- Image 3 -->
+                                        <div style="border: 1px solid var(--border-admin); padding: 10px; border-radius: 6px;">
+                                            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Imagen 3</label>
+                                            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                                                <img src="" id="pdf-gal-img-3-prev" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-admin);">
+                                                <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="pdf-gal-img-3-file" style="padding: 4px 8px; font-size: 0.75rem;">Subir 📤</button>
+                                                <input type="file" id="pdf-gal-img-3-file" style="display: none;" accept="image/*">
+                                                <input type="hidden" id="pdf-gal-img-3-path">
+                                            </div>
+                                            <input type="text" id="pdf-gal-cap-3" class="form-control" placeholder="Pie de foto" style="font-size: 0.8rem; height: auto; padding: 4px 8px;" required>
+                                        </div>
+
+                                        <!-- Image 4 -->
+                                        <div style="border: 1px solid var(--border-admin); padding: 10px; border-radius: 6px;">
+                                            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Imagen 4</label>
+                                            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                                                <img src="" id="pdf-gal-img-4-prev" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-admin);">
+                                                <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="pdf-gal-img-4-file" style="padding: 4px 8px; font-size: 0.75rem;">Subir 📤</button>
+                                                <input type="file" id="pdf-gal-img-4-file" style="display: none;" accept="image/*">
+                                                <input type="hidden" id="pdf-gal-img-4-path">
+                                            </div>
+                                            <input type="text" id="pdf-gal-cap-4" class="form-control" placeholder="Pie de foto" style="font-size: 0.8rem; height: auto; padding: 4px 8px;" required>
+                                        </div>
+
+                                        <!-- Image 5 -->
+                                        <div style="border: 1px solid var(--border-admin); padding: 10px; border-radius: 6px;">
+                                            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Imagen 5</label>
+                                            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                                                <img src="" id="pdf-gal-img-5-prev" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-admin);">
+                                                <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="pdf-gal-img-5-file" style="padding: 4px 8px; font-size: 0.75rem;">Subir 📤</button>
+                                                <input type="file" id="pdf-gal-img-5-file" style="display: none;" accept="image/*">
+                                                <input type="hidden" id="pdf-gal-img-5-path">
+                                            </div>
+                                            <input type="text" id="pdf-gal-cap-5" class="form-control" placeholder="Pie de foto" style="font-size: 0.8rem; height: auto; padding: 4px 8px;" required>
+                                        </div>
+
+                                        <!-- Image 6 -->
+                                        <div style="border: 1px solid var(--border-admin); padding: 10px; border-radius: 6px;">
+                                            <label style="font-weight: bold; display: block; margin-bottom: 5px;">Imagen 6</label>
+                                            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+                                                <img src="" id="pdf-gal-img-6-prev" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-admin);">
+                                                <button type="button" class="btn btn-secondary btn-sm btn-upload-trigger" data-input="pdf-gal-img-6-file" style="padding: 4px 8px; font-size: 0.75rem;">Subir 📤</button>
+                                                <input type="file" id="pdf-gal-img-6-file" style="display: none;" accept="image/*">
+                                                <input type="hidden" id="pdf-gal-img-6-path">
+                                            </div>
+                                            <input type="text" id="pdf-gal-cap-6" class="form-control" placeholder="Pie de foto" style="font-size: 0.8rem; height: auto; padding: 4px 8px;" required>
+                                        </div>
+                                    </div>
+                                </div>
                                 
                                 <div class="pdf-compilation-actions">
                                     <button type="submit" class="btn btn-secondary btn-full" id="btn-save-pdf-draft">
@@ -1749,7 +1869,36 @@
                                 <span>Guardar Configuraciones ⚙️</span>
                             </button>
                         </div>
-                    </form>
+                </div>
+
+                <!-- TAB 8: LEADS Y PROSPECTOS -->
+                <div id="tab-leads" class="tab-content">
+                    <div class="faq-panel-card" style="width: 100%; max-width: 100%;">
+                        <div class="panel-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3>Registro de Leads / Prospectos Capturados</h3>
+                            <button type="button" class="btn btn-secondary btn-sm" id="btn-export-leads-csv" style="background-color: #0284c7; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                                <span>Exportar a CSV 📥</span>
+                            </button>
+                        </div>
+                        <p class="section-desc" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Esta tabla muestra los contactos de los usuarios que completaron el formulario en la landing page para descargar el catálogo PDF.</p>
+                        
+                        <div class="table-container">
+                            <table class="admin-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha / Hora</th>
+                                        <th>Nombre</th>
+                                        <th>Correo Electrónico</th>
+                                        <th>WhatsApp</th>
+                                        <th>Vehículo Solicitado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leads-table-body">
+                                    <!-- Dynamic rows loaded from db or server -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
             </div>

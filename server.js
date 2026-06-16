@@ -53,6 +53,56 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // Endpoint to save captured lead
+    if (req.method === 'POST' && req.url === '/api/save-lead') {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            try {
+                const lead = JSON.parse(body);
+                const leadsPath = path.join(PUBLIC_DIR, 'leads.json');
+                let leads = [];
+                if (fs.existsSync(leadsPath)) {
+                    try {
+                        leads = JSON.parse(fs.readFileSync(leadsPath, 'utf8'));
+                    } catch (e) {
+                        console.error('[Dev Server] Error parseando leads.json existente, reiniciando array:', e);
+                    }
+                }
+                leads.push(lead);
+                fs.writeFileSync(leadsPath, JSON.stringify(leads, null, 2), 'utf8');
+                console.log('[Dev Server] Lead guardado en disco con éxito:', lead.email);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true }));
+            } catch (err) {
+                console.error('[Dev Server] Error al guardar el lead:', err);
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: err.message }));
+            }
+        });
+        return;
+    }
+
+    // Endpoint to retrieve all leads from disk
+    if (req.method === 'GET' && req.url === '/api/get-leads') {
+        try {
+            const leadsPath = path.join(PUBLIC_DIR, 'leads.json');
+            let leads = [];
+            if (fs.existsSync(leadsPath)) {
+                leads = JSON.parse(fs.readFileSync(leadsPath, 'utf8'));
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(leads));
+        } catch (err) {
+            console.error('[Dev Server] Error al obtener los leads:', err);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: err.message }));
+        }
+        return;
+    }
+
     // Serve static files
     let filePath = path.join(PUBLIC_DIR, req.url === '/' ? 'index.html' : req.url.split('?')[0]);
     

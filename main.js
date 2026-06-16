@@ -862,19 +862,83 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (trigger) {
             e.preventDefault();
             
-            // Reset modal states
-            pdfLoadingView.style.display = 'flex';
-            pdfReadyView.style.display = 'none';
+            // Reset modal states to show lead form first
+            const leadForm = document.getElementById('pdf-lead-form');
+            if (leadForm) {
+                leadForm.reset();
+                leadForm.style.display = 'block';
+            }
+            if (pdfLoadingView) pdfLoadingView.style.display = 'none';
+            if (pdfReadyView) pdfReadyView.style.display = 'none';
             
             openModal(modals.pdf);
-            
-            // Simulate 2s processing spinner before showing the download button
-            setTimeout(() => {
-                pdfLoadingView.style.display = 'none';
-                pdfReadyView.style.display = 'block';
-            }, 2000);
         }
     });
+
+    // Lead Form submission handler
+    const leadForm = document.getElementById('pdf-lead-form');
+    if (leadForm) {
+        leadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('pdf-lead-name').value.trim();
+            const email = document.getElementById('pdf-lead-email').value.trim();
+            const whatsapp = document.getElementById('pdf-lead-whatsapp').value.trim();
+            
+            // Determine vehicle name
+            let vehicleName = "Toyota Corolla Cross 2.0 Elite Edition";
+            if (db && db.pdf_config && db.vehicles) {
+                const pv = db.vehicles.find(v => v.id === db.pdf_config.selected_vehicle_id) || db.vehicles[0];
+                if (pv) vehicleName = pv.name;
+            }
+            
+            const lead = {
+                name,
+                email,
+                whatsapp: whatsapp || "No provisto",
+                vehicle: vehicleName,
+                timestamp: new Date().toISOString()
+            };
+            
+            // 1. Save lead locally in IndexedDB
+            try {
+                await MLCDatabase.addLead(lead);
+                console.log("[Lead Capture] Guardado localmente en IndexedDB.");
+            } catch (err) {
+                console.error("[Lead Capture] Error al guardar local en IndexedDB:", err);
+            }
+            
+            // 2. Save lead to Server (Node backend if running)
+            try {
+                const res = await fetch('/api/save-lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(lead)
+                });
+                if (res.ok) {
+                    console.log("[Lead Capture] Guardado remotamente en servidor.");
+                }
+            } catch (err) {
+                console.info("[Lead Capture] Servidor Node no disponible, guardado local exitoso.");
+            }
+            
+            // Hide form and show loader
+            leadForm.style.display = 'none';
+            if (pdfLoadingView) pdfLoadingView.style.display = 'flex';
+            
+            // Wait 1.5s then show download ready & trigger download
+            setTimeout(() => {
+                if (pdfLoadingView) pdfLoadingView.style.display = 'none';
+                if (pdfReadyView) pdfReadyView.style.display = 'block';
+                
+                // Trigger actual download
+                const downloadBtn = document.getElementById('btn-actual-download');
+                if (downloadBtn) {
+                    downloadBtn.click();
+                }
+            }, 1500);
+        });
+    }
 
     // Close buttons click handlers
     if (closeBtns.whatsapp) closeBtns.whatsapp.addEventListener('click', () => closeModal(modals.whatsapp));
