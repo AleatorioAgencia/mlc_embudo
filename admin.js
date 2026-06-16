@@ -2491,6 +2491,35 @@ document.addEventListener('DOMContentLoaded', () => {
             reader.readAsText(file);
         });
     }
+    
+    const btnSyncDefaultDb = document.getElementById('btn-sync-default-db');
+    if (btnSyncDefaultDb) {
+        btnSyncDefaultDb.addEventListener('click', async () => {
+            if (!confirm("⚠️ ¿Estás seguro de que deseas cargar el archivo 'default_db.json' del servidor?\n\nEsto sobrescribirá por completo la base de datos actual (Supabase/local) con los valores predeterminados del código fuente.")) {
+                return;
+            }
+            try {
+                const response = await fetch('default_db.json?t=' + Date.now());
+                if (!response.ok) throw new Error("No se pudo obtener el archivo default_db.json.");
+                const serverDB = await response.json();
+                if (serverDB && serverDB.landing_texts && serverDB.page_settings) {
+                    currentDBState = serverDB;
+                    await MLCDatabase.saveDraft(currentDBState);
+                    await MLCDatabase.saveLive(currentDBState);
+                    loadAllFormsData();
+                    setUnpublishedChanges(false);
+                    logActivity("Base de datos sobrescrita desde default_db.json del servidor.");
+                    alert("🚀 ¡Base de datos y Supabase actualizadas con éxito desde default_db.json!");
+                    window.location.reload();
+                } else {
+                    alert("❌ El archivo default_db.json obtenido del servidor no es un respaldo válido.");
+                }
+            } catch (err) {
+                console.error("Error al cargar default_db.json:", err);
+                alert("❌ Error al cargar default_db.json: " + err.message);
+            }
+        });
+    }
 });
 
 function deepMerge(target, source) {
