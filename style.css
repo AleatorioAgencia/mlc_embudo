@@ -2016,7 +2016,8 @@ img {
     }
     
     .pdf-container {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column-reverse;
         gap: 40px;
         text-align: center;
     }
