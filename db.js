@@ -122,6 +122,7 @@ const MLCDatabase = {
                 console.log(`[Supabase] Guardado con éxito: ${key}`);
             } catch (err) {
                 console.error(`[Supabase] Error al guardar ${key}:`, err);
+                throw new Error(`Fallo de permisos o red en Supabase: ${err.message || JSON.stringify(err)}`);
             }
         }
     },

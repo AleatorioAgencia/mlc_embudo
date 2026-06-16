@@ -492,8 +492,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 logActivity(`Publicado. Teléfono WhatsApp activo: ${phoneBeingPublished}`);
                 alert(`🚀 ¡Cambios publicados!\n\nNúmero WhatsApp activo: ${phoneBeingPublished}\n\nRefresca tu landing pública (Ctrl+Shift+R) para ver los cambios.`);
             } catch (e) {
-                console.error("[PUBLISH] Error al publicar cambios en IndexedDB:", e);
-                alert("❌ Error al publicar cambios. Por favor, revisa la consola.");
+                console.error("[PUBLISH] Error al publicar cambios:", e);
+                if (e.message && e.message.includes("Supabase")) {
+                    alert(`❌ ERROR CRÍTICO DE BASE DE DATOS (SUPABASE)\n\nSupabase ha rechazado el guardado de tus datos. Esto ocurre porque tu base de datos tiene activada la "Row Level Security (RLS)" que bloquea escrituras anónimas.\n\nPara solucionarlo permanentemente, entra a tu panel de Supabase > SQL Editor y ejecuta este comando:\n\nCREATE POLICY "Allow public inserts/updates" ON public.landing_state FOR ALL USING (true) WITH CHECK (true);\n\nDetalle técnico: ${e.message}`);
+                } else {
+                    alert("❌ Error al publicar cambios. Revisa la consola para más detalles.");
+                }
             }
         });
     }
