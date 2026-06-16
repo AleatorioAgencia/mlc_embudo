@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // === SAFETY FALLBACK FOR REVEALING BODY ===
     setTimeout(() => {
         document.body.classList.remove('loading');
-    }, 1500);
+    }, 4000);
 
     // === LOAD DYNAMIC CMS CONTENT ===
     let db = null;
