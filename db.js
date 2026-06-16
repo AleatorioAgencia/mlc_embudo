@@ -175,5 +175,38 @@ const MLCDatabase = {
             const store = transaction.objectStore(this.storeName);
             store.put(leads, 'mlc_leads');
         }
+    },
+
+    async uploadFile(file) {
+        if (!isSupabaseConfigured || !supabaseClient) {
+            return null;
+        }
+        try {
+            // Generar un nombre único para evitar colisiones
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+            
+            const { data, error } = await supabaseClient
+                .storage
+                .from('cms_media')
+                .upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
+            
+            if (error) throw error;
+            
+            // Obtener URL pública
+            const { data: { publicUrl } } = supabaseClient
+                .storage
+                .from('cms_media')
+                .getPublicUrl(fileName);
+                
+            console.log("[Supabase Storage] Archivo subido con éxito:", publicUrl);
+            return publicUrl;
+        } catch (err) {
+            console.error("[Supabase Storage] Error subiendo archivo:", err);
+            return null;
+        }
     }
 };

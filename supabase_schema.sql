@@ -30,3 +30,22 @@ CREATE POLICY "Permitir acceso anonimo a landing_state" ON public.landing_state 
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Permitir acceso anonimo a leads" ON public.leads;
 CREATE POLICY "Permitir acceso anonimo a leads" ON public.leads FOR ALL USING (true);
+
+-- 4. Bucket de Almacenamiento (Supabase Storage) para archivos subidos (Imágenes y Videos)
+-- Crea el bucket 'cms_media' de manera pública
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('cms_media', 'cms_media', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Políticas de Seguridad para permitir lectura y subida pública anónima en cms_media
+DROP POLICY IF EXISTS "Permitir acceso publico de lectura" ON storage.objects;
+CREATE POLICY "Permitir acceso publico de lectura" ON storage.objects FOR SELECT USING (bucket_id = 'cms_media');
+
+DROP POLICY IF EXISTS "Permitir subida anonima" ON storage.objects;
+CREATE POLICY "Permitir subida anonima" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'cms_media');
+
+DROP POLICY IF EXISTS "Permitir actualizacion anonima" ON storage.objects;
+CREATE POLICY "Permitir actualizacion anonima" ON storage.objects FOR UPDATE USING (bucket_id = 'cms_media');
+
+DROP POLICY IF EXISTS "Permitir borrado anonimo" ON storage.objects;
+CREATE POLICY "Permitir borrado anonimo" ON storage.objects FOR DELETE USING (bucket_id = 'cms_media');

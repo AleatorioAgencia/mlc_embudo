@@ -2105,47 +2105,58 @@ document.addEventListener('DOMContentLoaded', () => {
             const inputEl = document.getElementById(cfg.id);
             if (!inputEl) return;
 
-            inputEl.addEventListener('change', (e) => {
+            inputEl.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
 
-                // Validate file size (under 4.5MB to avoid localStorage limit)
-                if (file.size > 4.5 * 1024 * 1024) {
-                    alert("⚠️ El archivo es demasiado grande. Por favor, sube una imagen o video inferior a 4.5MB para evitar límites de almacenamiento en el navegador.");
-                    return;
+                // Actualizar etiqueta de estado/progreso si existe
+                let statusEl = null;
+                if (cfg.statusId) {
+                    statusEl = document.getElementById(cfg.statusId);
+                }
+                if (statusEl) {
+                    statusEl.textContent = "Subiendo a la nube...";
+                    statusEl.style.color = "#3b82f6";
+                }
+
+                // Subir a Supabase Storage de manera prioritaria
+                let cloudUrl = null;
+                try {
+                    cloudUrl = await MLCDatabase.uploadFile(file);
+                } catch (err) {
+                    console.error("[Storage] Error subiendo archivo a Supabase Storage:", err);
                 }
 
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const base64Data = event.target.result;
+                    // Guardar URL de la nube si existe, de lo contrario base64 fallback
+                    const finalData = cloudUrl || base64Data;
                     
                     // 1. Update Preview elements
                     if (cfg.previewId) {
                         const prevEl = document.getElementById(cfg.previewId);
-                        if (prevEl) prevEl.src = base64Data;
+                        if (prevEl) prevEl.src = finalData;
                     }
 
                     // 2. Update Wireframe previews
                     if (cfg.wfPreviewId) {
                         const wfPrevEl = document.getElementById(cfg.wfPreviewId);
                         if (wfPrevEl) {
-                            wfPrevEl.style.backgroundImage = `url(${base64Data})`;
+                            wfPrevEl.style.backgroundImage = `url(${finalData})`;
                         }
                     }
 
                     // 3. Update hidden input for path (Vehicle CRUD specific)
                     if (cfg.pathInputId) {
                         const pathEl = document.getElementById(cfg.pathInputId);
-                        if (pathEl) pathEl.value = base64Data;
+                        if (pathEl) pathEl.value = finalData;
                     }
 
                     // 4. Update status label (VSL / Reels Video specific)
-                    if (cfg.statusId) {
-                        const statusEl = document.getElementById(cfg.statusId);
-                        if (statusEl) {
-                            statusEl.textContent = "Video cargado (Listo)";
-                            statusEl.style.color = "#b1976b";
-                        }
+                    if (statusEl) {
+                        statusEl.textContent = cloudUrl ? "Archivo subido a la nube ☁️" : "Archivo cargado (Local)";
+                        statusEl.style.color = cloudUrl ? "#10b981" : "#b1976b";
                     }
 
                     // 5. Update Database state dynamically
@@ -2155,12 +2166,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         const primaryId = currentDBState.pdf_config.selected_vehicle_id || "1";
                         const primaryVehicle = currentDBState.vehicles.find(v => v.id === primaryId);
                         if (primaryVehicle) {
-                            primaryVehicle.image = base64Data;
+                            primaryVehicle.image = finalData;
                         }
                     } else if (cfg.target === 'veh_img') {
                         // Handled by CRUD submit
                     } else {
-                        lt[cfg.target] = base64Data;
+                        lt[cfg.target] = finalData;
                     }
 
                     // Automatically save draft on upload change
@@ -2171,7 +2182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!exists) {
                         currentDBState.media_library.push({
                             name: file.name,
-                            path: base64Data,
+                            path: finalData,
                             type: cfg.type === 'video' ? 'Videos' : 'Subidos'
                         });
                         if (cfg.target !== 'veh_img') {
