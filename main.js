@@ -908,20 +908,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.error("[Lead Capture] Error al guardar local en IndexedDB:", err);
             }
             
-            // 2. Save lead to Server (Node backend if running)
-            try {
-                const res = await fetch('/api/save-lead', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(lead)
-                });
-                if (res.ok) {
-                    console.log("[Lead Capture] Guardado remotamente en servidor.");
-                }
-            } catch (err) {
-                console.info("[Lead Capture] Servidor Node no disponible, guardado local exitoso.");
-            }
-            
             // Hide form and show loader
             leadForm.style.display = 'none';
             if (pdfLoadingView) pdfLoadingView.style.display = 'flex';

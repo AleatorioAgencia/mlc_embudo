@@ -589,25 +589,10 @@ document.addEventListener('DOMContentLoaded', () => {
         body.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Cargando leads...</td></tr>";
         
         let leads = [];
-        // 1. Try to load from server
         try {
-            const res = await fetch('/api/get-leads');
-            if (res.ok) {
-                leads = await res.json();
-            }
+            leads = await MLCDatabase.getLeads();
         } catch (err) {
-            console.warn("[Admin Leads] Servidor backend no responde o no disponible, intentando IndexedDB local:", err);
-        }
-        
-        // 2. Fetch and merge from IndexedDB
-        try {
-            const localLeads = await MLCDatabase.getLeads();
-            // If local leads are more up to date, use them
-            if (localLeads && localLeads.length > leads.length) {
-                leads = localLeads;
-            }
-        } catch (err) {
-            console.error("[Admin Leads] Error al cargar leads desde IndexedDB:", err);
+            console.warn("[Admin Leads] Error cargando leads de base de datos:", err);
         }
         
         if (leads.length === 0) {

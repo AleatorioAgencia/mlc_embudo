@@ -1,6 +1,19 @@
 /* ============================================================
-   MLC MASTER CHINA - INDEXEDDB PERSISTENCE HELPER (db.js)
+   MLC MASTER CHINA - SUPABASE PERSISTENCE HELPER (db.js)
    ============================================================ */
+
+// INSTRUCCIONES: Reemplaza estas dos constantes con los datos de tu proyecto Supabase.
+// Puedes encontrar esto en tu dashboard de Supabase: Project Settings -> API
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+// Si las claves no están configuradas, usará IndexedDB localmente como respaldo temporal.
+const isSupabaseConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+
+let supabaseClient = null;
+if (isSupabaseConfigured && window.supabase) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
 
 const MLCDatabase = {
     dbName: 'mlc_landing_db',
@@ -9,200 +22,158 @@ const MLCDatabase = {
     db: null,
 
     /**
-     * Initializes IndexedDB and runs migration if necessary.
+     * Initializes IndexedDB (as fallback) and Supabase.
      */
     init() {
         return new Promise((resolve, reject) => {
             if (!window.indexedDB) {
-                console.warn("IndexedDB no es soportado por este navegador. Se usará localStorage de respaldo.");
+                console.warn("IndexedDB no es soportado por este navegador.");
                 resolve();
                 return;
             }
-
             const request = indexedDB.open(this.dbName, this.dbVersion);
-
             request.onupgradeneeded = (e) => {
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains(this.storeName)) {
                     db.createObjectStore(this.storeName);
-                    console.log(`[IndexedDB] Object store '${this.storeName}' creado.`);
                 }
             };
-
-            request.onsuccess = async (e) => {
+            request.onsuccess = (e) => {
                 this.db = e.target.result;
-                console.log("[IndexedDB] Base de datos conectada con éxito.");
-                try {
-                    await this.migrateFromLocalStorage();
-                } catch (err) {
-                    console.error("[IndexedDB] Error durante la migración de localStorage:", err);
-                }
+                console.log(isSupabaseConfigured ? "[Supabase] Conectado. IndexedDB activo como caché local." : "[IndexedDB] Activo (Supabase no configurado).");
                 resolve();
             };
-
             request.onerror = (e) => {
-                console.error("[IndexedDB] Error al abrir la base de datos:", e.target.error);
                 reject(e.target.error);
             };
         });
     },
 
     /**
-     * Internal: Gets a value by key.
+     * Gets a value (prioritizes Supabase if configured)
      */
-    get(key) {
+    async get(key) {
+        if (isSupabaseConfigured && supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('landing_state')
+                    .select('data')
+                    .eq('id', key)
+                    .single();
+                
+                if (error && error.code !== 'PGRST116') { // PGRST116 = No rows found
+                    throw error;
+                }
+                if (data && data.data) return data.data;
+            } catch (err) {
+                console.error(`[Supabase] Error al leer ${key}, leyendo de local fallback:`, err);
+            }
+        }
+        
+        // Fallback to IndexedDB
         return new Promise((resolve, reject) => {
             if (!this.db) {
-                // Fallback to localStorage
                 try {
                     const val = localStorage.getItem(key);
                     resolve(val ? JSON.parse(val) : null);
-                } catch (e) {
-                    reject(e);
-                }
+                } catch(e) { resolve(null); }
                 return;
             }
-
             const transaction = this.db.transaction([this.storeName], 'readonly');
             const store = transaction.objectStore(this.storeName);
             const request = store.get(key);
-
-            request.onsuccess = (e) => {
-                resolve(e.target.result || null);
-            };
-
-            request.onerror = (e) => {
-                reject(e.target.error);
-            };
+            request.onsuccess = e => resolve(e.target.result || null);
+            request.onerror = e => reject(e.target.error);
         });
     },
 
     /**
-     * Internal: Sets a value for a key.
+     * Sets a value (Saves to both Supabase and IndexedDB fallback)
      */
-    set(key, val) {
-        return new Promise((resolve, reject) => {
-            if (!this.db) {
-                // Fallback to localStorage
-                try {
-                    localStorage.setItem(key, JSON.stringify(val));
-                    resolve();
-                } catch (e) {
-                    reject(e);
-                }
-                return;
-            }
-
+    async set(key, val) {
+        // Save to IndexedDB first
+        if (this.db) {
             const transaction = this.db.transaction([this.storeName], 'readwrite');
             const store = transaction.objectStore(this.storeName);
-            const request = store.put(val, key);
+            store.put(val, key);
+        }
 
-            request.onsuccess = () => {
-                resolve();
-            };
-
-            request.onerror = (e) => {
-                reject(e.target.error);
-            };
-        });
+        if (isSupabaseConfigured && supabaseClient) {
+            try {
+                const { error } = await supabaseClient
+                    .from('landing_state')
+                    .upsert({ id: key, data: val }, { onConflict: 'id' });
+                
+                if (error) throw error;
+                console.log(`[Supabase] Guardado con éxito: ${key}`);
+            } catch (err) {
+                console.error(`[Supabase] Error al guardar ${key}:`, err);
+            }
+        }
     },
 
-    /**
-     * Gets the live landing page database.
-     */
     async getLive() {
         return await this.get('mlc_landing_db_live');
     },
 
-    /**
-     * Gets the draft/working database.
-     */
     async getDraft() {
         return await this.get('mlc_landing_db_draft');
     },
 
-    /**
-     * Saves the live landing page database.
-     */
     async saveLive(data) {
         await this.set('mlc_landing_db_live', data);
     },
 
-    /**
-     * Saves the draft/working database.
-     */
     async saveDraft(data) {
         await this.set('mlc_landing_db_draft', data);
     },
 
-    /**
-     * Gets captured leads from IndexedDB.
-     */
     async getLeads() {
-        return await this.get('mlc_leads') || [];
+        if (isSupabaseConfigured && supabaseClient) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('leads')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                return data || [];
+            } catch (err) {
+                console.error("[Supabase] Error obteniendo leads:", err);
+            }
+        }
+        
+        // Fallback to IndexedDB
+        return new Promise((resolve) => {
+            if (!this.db) return resolve([]);
+            const transaction = this.db.transaction([this.storeName], 'readonly');
+            const store = transaction.objectStore(this.storeName);
+            const request = store.get('mlc_leads');
+            request.onsuccess = e => resolve(e.target.result || []);
+            request.onerror = () => resolve([]);
+        });
     },
 
-    /**
-     * Saves leads list to IndexedDB.
-     */
-    async saveLeads(leads) {
-        await this.set('mlc_leads', leads);
-    },
-
-    /**
-     * Appends a new lead to the IndexedDB leads list.
-     */
     async addLead(lead) {
-        const leads = await this.getLeads();
-        leads.push(lead);
-        await this.saveLeads(leads);
-    },
-
-    /**
-     * Checks if there's any data in localStorage and migrates it to IndexedDB.
-     * Removes the keys from localStorage after successful migration to free up quota.
-     */
-    async migrateFromLocalStorage() {
-        // Only run if we don't already have live data in IndexedDB
-        const indexedLive = await this.get('mlc_landing_db_live');
-        if (!indexedLive) {
-            const localLiveStr = localStorage.getItem('mlc_landing_db_live');
-            const localDraftStr = localStorage.getItem('mlc_landing_db_draft');
-
-            let migratedLive = false;
-            let migratedDraft = false;
-
-            if (localLiveStr) {
-                console.log("[IndexedDB Migration] Migrando 'mlc_landing_db_live' de localStorage...");
-                try {
-                    const localLive = JSON.parse(localLiveStr);
-                    await this.saveLive(localLive);
-                    migratedLive = true;
-                } catch (e) {
-                    console.error("[IndexedDB Migration] Error parseando 'mlc_landing_db_live':", e);
-                }
+        if (isSupabaseConfigured && supabaseClient) {
+            try {
+                const { error } = await supabaseClient
+                    .from('leads')
+                    .insert([lead]);
+                if (error) throw error;
+                console.log("[Supabase] Lead guardado exitosamente");
+            } catch (err) {
+                console.error("[Supabase] Error al guardar lead:", err);
             }
+        }
 
-            if (localDraftStr) {
-                console.log("[IndexedDB Migration] Migrando 'mlc_landing_db_draft' de localStorage...");
-                try {
-                    const localDraft = JSON.parse(localDraftStr);
-                    await this.saveDraft(localDraft);
-                    migratedDraft = true;
-                } catch (e) {
-                    console.error("[IndexedDB Migration] Error parseando 'mlc_landing_db_draft':", e);
-                }
-            }
-
-            // Clean up localStorage to prevent QuotaExceededError in the origin
-            if (migratedLive) {
-                localStorage.removeItem('mlc_landing_db_live');
-                console.log("[IndexedDB Migration] 'mlc_landing_db_live' eliminado de localStorage.");
-            }
-            if (migratedDraft) {
-                localStorage.removeItem('mlc_landing_db_draft');
-                console.log("[IndexedDB Migration] 'mlc_landing_db_draft' eliminado de localStorage.");
-            }
+        // Fallback to IndexedDB
+        if (this.db) {
+            const leads = await this.getLeads();
+            leads.push(lead);
+            const transaction = this.db.transaction([this.storeName], 'readwrite');
+            const store = transaction.objectStore(this.storeName);
+            store.put(leads, 'mlc_leads');
         }
     }
 };
