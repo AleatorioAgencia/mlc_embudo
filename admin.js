@@ -316,8 +316,12 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 console.info("[IndexedDB] No se encontró default_db.json personalizado. Utilizando DEFAULT_DB estático.");
             }
-            await MLCDatabase.saveLive(initialDB);
-            await MLCDatabase.saveDraft(initialDB);
+            try {
+                await MLCDatabase.saveLive(initialDB);
+                await MLCDatabase.saveDraft(initialDB);
+            } catch (err) {
+                console.warn("[CMS] No se pudo guardar el estado inicial de base de datos (no crítico):", err);
+            }
             currentDBState = JSON.parse(JSON.stringify(initialDB));
         } else {
             // Load draft and deep merge with DEFAULT_DB to ensure any new keys/schemas (e.g. badges) are loaded

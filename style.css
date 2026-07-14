@@ -116,6 +116,8 @@ img {
     justify-content: center;
     font-family: var(--font-heading);
     font-weight: 600;
+    font-size: 0.9rem;
+    padding: 12px 24px;
     border-radius: 8px;
     border: none;
     cursor: pointer;

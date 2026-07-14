@@ -11,7 +11,26 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const isSupabaseConfigured = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
 
 let supabaseClient = null;
-if (isSupabaseConfigured && window.supabase) {
+let supabaseDisabled = false;
+
+try {
+    if (sessionStorage.getItem('supabase_disabled') === 'true') {
+        supabaseDisabled = true;
+        console.warn("[Supabase] Desactivando conexión a Supabase automáticamente por fallos en esta sesión.");
+    }
+} catch (e) {}
+
+function disableSupabase() {
+    if (!supabaseDisabled) {
+        supabaseDisabled = true;
+        console.warn("[Supabase] Desactivando llamadas a Supabase para el resto de la sesión debido a fallos de red o de timeout.");
+        try {
+            sessionStorage.setItem('supabase_disabled', 'true');
+        } catch (e) {}
+    }
+}
+
+if (isSupabaseConfigured && window.supabase && !supabaseDisabled) {
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
@@ -61,7 +80,7 @@ const MLCDatabase = {
      * Gets a value (prioritizes Supabase if configured)
      */
     async get(key) {
-        if (isSupabaseConfigured && supabaseClient) {
+        if (isSupabaseConfigured && supabaseClient && !supabaseDisabled) {
             try {
                 const { data, error } = await withTimeout(
                     supabaseClient
@@ -78,6 +97,9 @@ const MLCDatabase = {
                 if (data && data.data) return data.data;
             } catch (err) {
                 console.error(`[Supabase] Error al leer ${key}, leyendo de local fallback:`, err);
+                if (err.message && (err.message.includes("timeout") || err.message.includes("fetch") || err.message.includes("network") || err.message.includes("Network"))) {
+                    disableSupabase();
+                }
             }
         }
         
@@ -109,7 +131,7 @@ const MLCDatabase = {
             store.put(val, key);
         }
 
-        if (isSupabaseConfigured && supabaseClient) {
+        if (isSupabaseConfigured && supabaseClient && !supabaseDisabled) {
             try {
                 const { error } = await withTimeout(
                     supabaseClient
@@ -122,6 +144,9 @@ const MLCDatabase = {
                 console.log(`[Supabase] Guardado con éxito: ${key}`);
             } catch (err) {
                 console.error(`[Supabase] Error al guardar ${key}:`, err);
+                if (err.message && (err.message.includes("timeout") || err.message.includes("fetch") || err.message.includes("network") || err.message.includes("Network"))) {
+                    disableSupabase();
+                }
                 throw new Error(`Fallo de permisos o red en Supabase: ${err.message || JSON.stringify(err)}`);
             }
         }
@@ -144,7 +169,7 @@ const MLCDatabase = {
     },
 
     async getLeads() {
-        if (isSupabaseConfigured && supabaseClient) {
+        if (isSupabaseConfigured && supabaseClient && !supabaseDisabled) {
             try {
                 const { data, error } = await withTimeout(
                     supabaseClient
@@ -158,6 +183,9 @@ const MLCDatabase = {
                 return data || [];
             } catch (err) {
                 console.error("[Supabase] Error obteniendo leads:", err);
+                if (err.message && (err.message.includes("timeout") || err.message.includes("fetch") || err.message.includes("network") || err.message.includes("Network"))) {
+                    disableSupabase();
+                }
             }
         }
         
@@ -173,7 +201,7 @@ const MLCDatabase = {
     },
 
     async addLead(lead) {
-        if (isSupabaseConfigured && supabaseClient) {
+        if (isSupabaseConfigured && supabaseClient && !supabaseDisabled) {
             try {
                 const { error } = await withTimeout(
                     supabaseClient
@@ -185,6 +213,9 @@ const MLCDatabase = {
                 console.log("[Supabase] Lead guardado exitosamente");
             } catch (err) {
                 console.error("[Supabase] Error al guardar lead:", err);
+                if (err.message && (err.message.includes("timeout") || err.message.includes("fetch") || err.message.includes("network") || err.message.includes("Network"))) {
+                    disableSupabase();
+                }
             }
         }
 
@@ -199,7 +230,7 @@ const MLCDatabase = {
     },
 
     async uploadFile(file) {
-        if (!isSupabaseConfigured || !supabaseClient) {
+        if (!isSupabaseConfigured || !supabaseClient || supabaseDisabled) {
             return null;
         }
         try {

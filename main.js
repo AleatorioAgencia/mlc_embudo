@@ -98,8 +98,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             db = defaultDB;
             if (db) {
-                await MLCDatabase.saveLive(db);
-                await MLCDatabase.saveDraft(db);
+                try {
+                    await MLCDatabase.saveLive(db);
+                    await MLCDatabase.saveDraft(db);
+                } catch (saveErr) {
+                    console.warn("[MLC CMS] No se pudo pre-guardar la base de datos por defecto (posible desconexión de Supabase):", saveErr);
+                }
             }
         }
 
