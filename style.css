@@ -47,6 +47,7 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px;
+    overflow-x: hidden;
 }
 
 body {
@@ -857,6 +858,8 @@ img {
     margin-top: 40px;
     display: flex;
     align-items: center;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .reels-slider {
@@ -866,6 +869,7 @@ img {
     scroll-behavior: smooth;
     padding: 10px 0;
     width: 100%;
+    min-width: 0;
     scrollbar-width: none; /* Firefox */
 }
 
@@ -874,8 +878,9 @@ img {
 }
 
 .reel-card {
-    min-width: 260px;
+    min-width: 220px;
     width: 260px;
+    flex-shrink: 0;
     background-color: var(--bg-body);
     border: 1px solid var(--border-color);
     border-radius: 16px;
@@ -1015,16 +1020,17 @@ img {
 }
 
 .ceo-quote-card {
-    position: absolute;
-    bottom: -30px;
-    right: -20px;
-    left: 20px;
+    position: relative;
+    bottom: auto;
+    right: auto;
+    left: auto;
     background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-color);
     padding: 20px;
     border-radius: 12px;
     box-shadow: var(--shadow-lg);
+    margin-top: 16px;
 }
 
 .quote-text {
@@ -2007,6 +2013,8 @@ img {
     .authority-image-side {
         max-width: 450px;
         margin: 0 auto;
+        position: relative;
+        width: 100%;
     }
     
     .cost-grid {
@@ -2078,8 +2086,15 @@ img {
         width: 100%;
     }
     
-    .btn {
+    .hero-actions .btn,
+    .pdf-actions .btn,
+    .modal-content .btn {
         width: 100%;
+    }
+    
+    .header-cta .btn {
+        width: auto;
+        white-space: nowrap;
     }
     
     .sticky-cta-mobile {
@@ -2090,8 +2105,15 @@ img {
         padding: 30px 20px;
     }
     
+    .top-bar-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 6px;
+    }
+
     .top-bar-content p {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+        line-height: 1.4;
     }
     
     .social-stats-row {
@@ -2104,6 +2126,56 @@ img {
     
     .slider-arrow {
         display: none; /* Swipe is preferred on mobile */
+    }
+    
+    .reel-card {
+        min-width: 200px;
+        width: 70vw;
+        max-width: 260px;
+    }
+    
+    .reel-video-container {
+        height: 280px;
+    }
+    
+    .calculator-widget {
+        padding: 24px 16px;
+    }
+    
+    .authority-section {
+        padding: 50px 0;
+    }
+    
+    .reels-section {
+        padding: 50px 0;
+    }
+    
+    .cost-section {
+        padding: 50px 0;
+    }
+    
+    .cost-card {
+        padding: 24px 16px;
+    }
+    
+    section {
+        overflow-x: hidden;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-cta .btn span {
+        display: none;
+    }
+    .header-cta .btn {
+        padding: 8px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        gap: 0;
+    }
+    .header-cta .icon-ws {
+        margin: 0;
     }
 }
 
